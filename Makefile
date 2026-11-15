@@ -1,18 +1,29 @@
 SAIL := cd backend && ./vendor/bin/sail
 
-.PHONY: up down backend frontend test
+.DEFAULT_GOAL := up
 
-up: backend
-	$(MAKE) frontend
+.PHONY: setup up down seed test test-backend test-frontend
 
-backend:
-	$(SAIL) up -d
+setup:
+	cd backend && cp --update=none .env.example .env
+	cd backend && composer install
+	cd frontend && cp --update=none .env.example .env
+	cd frontend && pnpm install
+
+up:
+	docker compose up
 
 down:
-	$(SAIL) down
+	docker compose down
 
-frontend:
-	cd frontend && pnpm dev
+seed:
+	@grep -q '^APP_KEY=.\+' backend/.env || ( $(SAIL) artisan key:generate )
+	$(SAIL) artisan migrate:fresh --seed
 
-test:
+test: test-backend test-frontend
+
+test-backend:
 	$(SAIL) artisan test
+
+test-frontend:
+	cd frontend && pnpm test

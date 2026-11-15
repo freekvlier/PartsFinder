@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Database\Factories\WorkshopFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+
+#[Fillable(['name', 'discount_percentage'])]
+class Workshop extends Authenticatable
+{
+    /** @use HasFactory<WorkshopFactory> */
+    use HasApiTokens, HasFactory;
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'discount_percentage' => 'float',
+        ];
+    }
+}

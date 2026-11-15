@@ -1,0 +1,28 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Workshop;
+use Illuminate\Database\Seeder;
+
+/**
+ * The hardcoded tokens below are for local development only; DatabaseSeeder runs this seeder in the local environment.
+ * Create real workshops with `php artisan workshop:create`.
+ */
+class WorkshopSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $workshops = [
+            'local-token-standard' => ['name' => 'Van Dijk Trucks', 'discount_percentage' => 0],
+            'local-token-discount' => ['name' => 'Jansen Truck Service', 'discount_percentage' => 10],
+        ];
+
+        foreach ($workshops as $token => $attributes) {
+            Workshop::create($attributes)->tokens()->create([
+                'name' => 'api',
+                'token' => hash('sha256', $token),
+            ]);
+        }
+    }
+}

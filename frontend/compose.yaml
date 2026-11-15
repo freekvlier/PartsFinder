@@ -1,0 +1,21 @@
+services:
+    frontend:
+        image: node:24
+        working_dir: /app
+        command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0"
+        environment:
+            NUXT_API_BASE: '${NUXT_API_BASE:-http://laravel.test/api}'
+            NUXT_API_TOKEN: '${NUXT_API_TOKEN:-local-token-standard}'
+        volumes:
+            - '.:/app'
+            - 'frontend-node-modules:/app/node_modules'
+        ports:
+            - '${FRONTEND_PORT:-3000}:3000'
+        networks:
+            - sail
+networks:
+    sail:
+        driver: bridge
+volumes:
+    frontend-node-modules:
+        driver: local
