@@ -1,9 +1,9 @@
 <?php
 
+use App\Enums\QuoteStatus;
 use App\Models\Part;
 use App\Models\Quote;
 use App\Models\QuoteLine;
-use App\QuoteStatus;
 
 beforeEach(function () {
     $this->workshop = actingAsWorkshop(10);

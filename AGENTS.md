@@ -19,7 +19,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 
 ## Data model
 
-- `parts` hold `brand_id`, `category_id`, `name`, `oem`, `condition` (`App\Condition` enum), `price_cents`, `stock_quantity` and `image`. Brand, category and colour are tables referenced by foreign keys. OEM is indexed but not unique (a new and a used part can share it).
+- `parts` hold `brand_id`, `category_id`, `name`, `oem`, `condition` (`App\Enums\Condition` enum), `price_cents`, `stock_quantity` and `image`. Brand, category and colour are tables referenced by foreign keys. OEM is indexed but not unique (a new and a used part can share it).
 - Colours are many-to-many through the `colour_part` pivot. A part without colours has no pivot rows. Stock is one number per part, shared by all its colours.
 - Money is stored and returned as integer cents (`price_cents`), never as decimals or floats. Only the frontend divides by 100, for display.
 - `Part::in_stock` is derived from `stock_quantity`, not stored.

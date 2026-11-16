@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Condition;
+use App\Enums\Condition;
 use App\Http\Requests\IndexBrandsRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Brand;

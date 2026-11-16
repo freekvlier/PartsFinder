@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Enums\QuoteStatus;
 use App\Models\Colour;
 use App\Models\Part;
 use App\Models\Quote;
 use App\Models\QuoteLine;
 use App\Models\Workshop;
-use App\QuoteStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 

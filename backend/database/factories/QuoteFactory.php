@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\QuoteStatus;
 use App\Models\Quote;
 use App\Models\Workshop;
-use App\QuoteStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

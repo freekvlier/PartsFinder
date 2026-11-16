@@ -1,6 +1,6 @@
 <?php
 
-use App\Condition;
+use App\Enums\Condition;
 use App\Models\Colour;
 use App\Models\Part;
 use Illuminate\Database\QueryException;

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\QuoteStatus;
+use App\Enums\QuoteStatus;
 use App\Services\QuoteCalculator;
 use Database\Factories\QuoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;

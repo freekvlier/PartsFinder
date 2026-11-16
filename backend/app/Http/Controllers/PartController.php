@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Condition;
+use App\Enums\Condition;
 use App\Http\Requests\IndexPartsRequest;
 use App\Http\Resources\PartResource;
 use App\Models\Part;

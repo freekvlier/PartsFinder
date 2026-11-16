@@ -1,6 +1,6 @@
 <?php
 
-use App\Condition;
+use App\Enums\Condition;
 use App\Models\Brand;
 use App\Models\Part;
 use Database\Seeders\PartSeeder;
