@@ -15,6 +15,7 @@ test('a quote of a workshop with 10% discount returns subtotal, discount, vat an
     $this->getJson("/api/quotes/{$quote->id}")
         ->assertOk()
         ->assertJsonPath('data.discountPercentage', 10)
+        ->assertJsonPath('data.vatPercentage', 21)
         ->assertJsonPath('data.totals', [
             'subtotalCents' => 30948,
             'discountCents' => 3095,

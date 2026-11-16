@@ -13,25 +13,28 @@ class QuotePolicy
      *
      * @param  Workshop  $workshop  The authenticated workshop.
      * @param  Quote  $quote  The quote.
+     * @return Response Allowed for the owner, otherwise a 404.
      */
     public function view(Workshop $workshop, Quote $quote): Response
     {
-        return $this->ownedBy($workshop, $quote);
+        return $quote->isOwnedBy($workshop) ? Response::allow() : Response::denyAsNotFound();
     }
 
     /**
-     * Whether the workshop may change the quote (lines and submit).
+     * Whether the workshop may change the quote (lines and submit): only its own draft quotes.
      *
      * @param  Workshop  $workshop  The authenticated workshop.
      * @param  Quote  $quote  The quote.
+     * @return Response Allowed for the owner of a draft; a 404 for another workshop; a 409 once submitted.
      */
     public function update(Workshop $workshop, Quote $quote): Response
     {
-        return $this->ownedBy($workshop, $quote);
-    }
+        if (! $quote->isOwnedBy($workshop)) {
+            return Response::denyAsNotFound();
+        }
 
-    private function ownedBy(Workshop $workshop, Quote $quote): Response
-    {
-        return $quote->workshop_id === $workshop->id ? Response::allow() : Response::denyAsNotFound();
+        return $quote->isSubmitted()
+            ? Response::deny('This quote has been submitted and can no longer be changed.')->withStatus(409)
+            : Response::allow();
     }
 }

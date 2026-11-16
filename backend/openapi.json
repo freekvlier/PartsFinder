@@ -694,6 +694,10 @@
                     "discountPercentage": {
                         "type": "number"
                     },
+                    "vatPercentage": {
+                        "type": "integer",
+                        "const": 21
+                    },
                     "lines": {
                         "type": "array",
                         "items": {
@@ -801,6 +805,7 @@
                     "status",
                     "submittedAt",
                     "discountPercentage",
+                    "vatPercentage",
                     "lines",
                     "warnings",
                     "totals"

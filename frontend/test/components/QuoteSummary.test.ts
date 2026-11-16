@@ -46,9 +46,22 @@ describe('quote drawer content', () => {
     const totals = summary.get('[data-testid="quote-totals"]').text()
     expect(totals).toContain('1.590,00')
     expect(totals).toContain('Discount (10%)')
+    expect(totals).toContain('VAT (21%)')
     expect(totals).toContain('159,00')
     expect(totals).toContain('300,51')
     expect(totals).toContain('1.731,51')
+  })
+
+  it('hides the discount line when the workshop has no discount', async () => {
+    useState('quote').value = makeQuote({
+      discountPercentage: 0,
+      totals: { subtotalCents: 159000, discountCents: 0, vatCents: 33390, totalCents: 192390 }
+    })
+
+    const summary = await mountSuspended(QuoteSummary)
+
+    expect(summary.find('[data-testid="quote-discount"]').exists()).toBe(false)
+    expect(summary.get('[data-testid="quote-totals"]').text()).not.toContain('Discount')
   })
 
   it('shows the colour of a line and the backorder flag with its warning', async () => {

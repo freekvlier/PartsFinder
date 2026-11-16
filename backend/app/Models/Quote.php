@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\QuoteStatus;
+use App\Services\QuoteCalculator;
 use Database\Factories\QuoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,10 +51,46 @@ class Quote extends Model
     }
 
     /**
+     * Whether the quote belongs to the workshop.
+     *
+     * @param  Workshop  $workshop  The workshop to check.
+     * @return bool True for the owner.
+     */
+    public function isOwnedBy(Workshop $workshop): bool
+    {
+        return $this->workshop_id === $workshop->id;
+    }
+
+    /**
      * Whether the quote has been submitted and is read-only.
+     *
+     * @return bool True once submitted.
      */
     public function isSubmitted(): bool
     {
         return $this->status === QuoteStatus::Submitted;
+    }
+
+    /**
+     * The totals of the quote: the stored ones once submitted, otherwise calculated live from current prices.
+     * Needs the workshop, lines and their parts loaded.
+     *
+     * @return array{subtotal: int, discount: int, vat: int, total: int}
+     */
+    public function totals(): array
+    {
+        if ($this->isSubmitted()) {
+            return [
+                'subtotal' => $this->subtotal_cents,
+                'discount' => $this->discount_cents,
+                'vat' => $this->vat_cents,
+                'total' => $this->total_cents,
+            ];
+        }
+
+        return (new QuoteCalculator)->totals(
+            $this->lines->map(fn (QuoteLine $line) => $line->part->price_cents * $line->quantity)->all(),
+            $this->workshop->discount_percentage,
+        );
     }
 }

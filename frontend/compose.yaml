@@ -8,7 +8,6 @@ services:
             NUXT_API_TOKEN: '${NUXT_API_TOKEN:-local-token-standard}'
         volumes:
             - '.:/app'
-            - 'frontend-node-modules:/app/node_modules'
         ports:
             - '${FRONTEND_PORT:-3000}:3000'
         networks:
@@ -16,6 +15,3 @@ services:
 networks:
     sail:
         driver: bridge
-volumes:
-    frontend-node-modules:
-        driver: local

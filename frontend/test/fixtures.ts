@@ -42,6 +42,7 @@ export function makeQuote(overrides: Partial<Quote> = {}): Quote {
     status: 'draft',
     submittedAt: null,
     discountPercentage: 10,
+    vatPercentage: 21,
     lines: [makeLine()],
     warnings: [],
     totals: { subtotalCents: 159000, discountCents: 15900, vatCents: 30051, totalCents: 173151 },

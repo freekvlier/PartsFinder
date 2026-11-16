@@ -132,7 +132,11 @@ async function run(action: () => Promise<unknown>) {
           </dt>
           <dd>{{ formatPrice(quote.totals.subtotalCents) }}</dd>
         </div>
-        <div class="flex justify-between">
+        <div
+          v-if="quote.totals.discountCents > 0"
+          class="flex justify-between"
+          data-testid="quote-discount"
+        >
           <dt class="text-muted">
             Discount ({{ quote.discountPercentage }}%)
           </dt>
@@ -140,7 +144,7 @@ async function run(action: () => Promise<unknown>) {
         </div>
         <div class="flex justify-between">
           <dt class="text-muted">
-            VAT
+            VAT ({{ quote.vatPercentage }}%)
           </dt>
           <dd>{{ formatPrice(quote.totals.vatCents) }}</dd>
         </div>

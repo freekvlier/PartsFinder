@@ -173,6 +173,8 @@ export interface components {
             status: "draft" | "submitted";
             submittedAt: string | null;
             discountPercentage: number;
+            /** @constant */
+            vatPercentage: 21;
             lines: {
                 id: number;
                 partId: number;

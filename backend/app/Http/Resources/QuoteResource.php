@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Quote;
 use App\Models\QuoteLine;
-use App\Services\QuoteService;
+use App\Services\QuoteCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,13 +21,14 @@ class QuoteResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $totals = app(QuoteService::class)->totals($this->resource);
+        $totals = $this->totals();
 
         return [
             'id' => $this->id,
             'status' => $this->status->value,
             'submittedAt' => $this->submitted_at?->toIso8601String(),
             'discountPercentage' => $this->workshop->discount_percentage,
+            'vatPercentage' => QuoteCalculator::VAT_PERCENTAGE,
             'lines' => $this->lines->map(fn (QuoteLine $line): array => [
                 'id' => $line->id,
                 'partId' => $line->part_id,

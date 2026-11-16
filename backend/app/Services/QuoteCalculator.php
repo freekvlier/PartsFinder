@@ -4,7 +4,8 @@ namespace App\Services;
 
 class QuoteCalculator
 {
-    private const VAT_BASIS_POINTS = 2100;
+    /** The VAT rate in percent, applied to every quote. */
+    public const VAT_PERCENTAGE = 21;
 
     /**
      * Calculate the quote totals in integer cents, rounding half up to a cent at every step.
@@ -17,7 +18,7 @@ class QuoteCalculator
     {
         $subtotal = array_sum($lineTotals);
         $discount = $this->share($subtotal, (int) round($discountPercentage * 100));
-        $vat = $this->share($subtotal - $discount, self::VAT_BASIS_POINTS);
+        $vat = $this->share($subtotal - $discount, self::VAT_PERCENTAGE * 100);
 
         return [
             'subtotal' => $subtotal,

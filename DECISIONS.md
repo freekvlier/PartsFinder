@@ -24,7 +24,7 @@
 
 **Why.** Variants would be the more logical model for a shop where every variant carries its own price, OEM number, image and stock. This shop is kept simple: a part has one price, one condition and one stock number, so the list, filter and sort work on a single row per part. Variants would add tables, aggregate queries ("cheapest variant", "has a variant with this condition") and a more complex card for data this shop does not vary. A new and a used version of an OEM are simply two parts that share the OEM number.
 
-**Trade-offs.** Stock is shared across a part's colours, so the quote rules must decide how to treat several colour lines of one part. If per-colour stock were needed later, `part_variants` is the next step, and quote lines could point at it.
+**Trade-offs.** Stock is shared across a part's colours, so the quote check totals the quantities of all lines of a part, in any colour. That is stricter than checking each line alone, but a quote can never promise more units than exist. If per-colour stock were needed later, `part_variants` is the next step, and quote lines could point at it.
 
 ## 3. Condition is a text column cast to an enum, not an integer
 
@@ -57,7 +57,7 @@
 
 ## 5. Quote rules live in a service class, not in controllers or the model
 
-**Chosen.** `QuoteService` holds every rule (colour, quantity and stock checks, merging lines, backorders, submit and the price snapshot) and `QuoteCalculator` holds the totals maths. Controllers only validate input and call the service; access to a quote is a policy that answers 404 for another workshop's quote.
+**Chosen.** `QuoteService` holds every rule (colour, quantity and stock checks, merging lines, backorders, submit and the price snapshot) and `QuoteCalculator` holds the totals maths. `Quote::totals()` derives the totals from the quote's own data through the calculator (stored once submitted, live while draft), so the resource can read them from the model. Controllers only validate input and call the service; access to a quote is a policy that answers 404 for another workshop's quote.
 
 **Rejected.** Putting the rules in controllers, in model events, or in the frontend.
 
@@ -67,4 +67,4 @@
 - Totals are calculated on the server only and returned with every response, so the frontend renders numbers and never adds them up.
 - The calculator uses integer cents and rounds half up at every step, so results are exact and repeatable.
 
-**Trade-offs.** Stock is shared across a part's colours, so the check totals the quantities of all lines of a part, in any colour. That is stricter than checking each line alone, but a quote can never promise more units than exist.
+**Trade-offs.** The server must process every change. The frontend cannot show a new total or reject an over-stock quantity on its own, so each add, update or remove waits for a response before the quote drawer updates.

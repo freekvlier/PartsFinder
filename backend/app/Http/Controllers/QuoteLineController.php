@@ -10,15 +10,16 @@ use App\Models\Quote;
 use App\Models\QuoteLine;
 use App\Services\QuoteService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuoteLineController extends Controller
 {
     /**
      * Create the controller.
      *
-     * @param  QuoteService  $quotes  The quote rules.
+     * @param  QuoteService  $quoteService  The quote rules.
      */
-    public function __construct(private QuoteService $quotes) {}
+    public function __construct(private QuoteService $quoteService) {}
 
     /**
      * Add a part to the quote.
@@ -31,9 +32,9 @@ class QuoteLineController extends Controller
     {
         $part = Part::with('colours')->findOrFail($request->integer('partId'));
 
-        $quote = $this->quotes->addLine($quote, $part, $request->integer('quantity'), $request->input('colour'));
+        $quote = $this->quoteService->addLine($quote, $part, $request->integer('quantity'), $request->input('colour'));
 
-        return (new QuoteResource($quote))->response()->setStatusCode(201);
+        return $quote->toResource()->response()->setStatusCode(201);
     }
 
     /**
@@ -44,17 +45,17 @@ class QuoteLineController extends Controller
      * @param  QuoteLine  $line  The line, resolved only among this quote's lines.
      * @return QuoteResource The updated quote.
      */
-    public function update(UpdateQuoteLineRequest $request, Quote $quote, QuoteLine $line): QuoteResource
+    public function update(UpdateQuoteLineRequest $request, Quote $quote, QuoteLine $line): JsonResource
     {
         $line->load('part.colours', 'colour');
 
-        return new QuoteResource($this->quotes->updateLine(
+        return $this->quoteService->updateLine(
             $quote,
             $line,
             $request->has('quantity') ? $request->integer('quantity') : null,
             $request->has('colour'),
             $request->input('colour'),
-        ));
+        )->toResource();
     }
 
     /**
@@ -64,8 +65,8 @@ class QuoteLineController extends Controller
      * @param  QuoteLine  $line  The line, resolved only among this quote's lines.
      * @return QuoteResource The updated quote.
      */
-    public function destroy(Quote $quote, QuoteLine $line): QuoteResource
+    public function destroy(Quote $quote, QuoteLine $line): JsonResource
     {
-        return new QuoteResource($this->quotes->removeLine($quote, $line));
+        return $this->quoteService->removeLine($quote, $line)->toResource();
     }
 }

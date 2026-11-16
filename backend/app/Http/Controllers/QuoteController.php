@@ -7,15 +7,16 @@ use App\Models\Quote;
 use App\Services\QuoteService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuoteController extends Controller
 {
     /**
      * Create the controller.
      *
-     * @param  QuoteService  $quotes  The quote rules.
+     * @param  QuoteService  $quoteService  The quote rules.
      */
-    public function __construct(private QuoteService $quotes) {}
+    public function __construct(private QuoteService $quoteService) {}
 
     /**
      * Start a new draft quote for the authenticated workshop.
@@ -25,9 +26,9 @@ class QuoteController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $quote = $this->quotes->create($request->user())->load(['workshop', 'lines.part', 'lines.colour']);
+        $quote = $this->quoteService->create($request->user())->load(['workshop', 'lines.part', 'lines.colour']);
 
-        return (new QuoteResource($quote))->response()->setStatusCode(201);
+        return $quote->toResource()->response()->setStatusCode(201);
     }
 
     /**
@@ -36,9 +37,9 @@ class QuoteController extends Controller
      * @param  Quote  $quote  The quote, resolved only among the workshop's own quotes.
      * @return QuoteResource The quote with lines, warnings and totals.
      */
-    public function show(Quote $quote): QuoteResource
+    public function show(Quote $quote): JsonResource
     {
-        return new QuoteResource($quote->load(['workshop', 'lines.part', 'lines.colour']));
+        return $quote->load(['workshop', 'lines.part', 'lines.colour'])->toResource();
     }
 
     /**
@@ -47,8 +48,8 @@ class QuoteController extends Controller
      * @param  Quote  $quote  The draft quote.
      * @return QuoteResource The submitted, now read-only quote.
      */
-    public function submit(Quote $quote): QuoteResource
+    public function submit(Quote $quote): JsonResource
     {
-        return new QuoteResource($this->quotes->submit($quote));
+        return $this->quoteService->submit($quote)->toResource();
     }
 }
