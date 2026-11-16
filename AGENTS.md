@@ -4,17 +4,17 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 
 ## Stack
 
-- `frontend/`: Nuxt 4, Vue 3, Tailwind CSS, fully responsive.
-- `backend/`: Laravel 13, PHP 8.3+, REST JSON API under `/api`.
-- Database: MySQL 8 through migrations and seeders. SQLite is acceptable for the automated test run only.
-- Tests: backend feature tests (PHPUnit or Pest), frontend unit/component tests (Vitest).
+- `frontend/`: Nuxt 4 with Vue 3, Nuxt UI and Tailwind CSS 4; server-side rendered, works on phones and desktops.
+- `backend/`: Laravel 13 on PHP 8.5, a JSON REST API under `/api` with Sanctum bearer tokens.
+- Database: MySQL 8; the schema comes from migrations, the data from seeders. The test suite runs on SQLite in memory, nothing else does.
+- Tests: Pest for the backend, Vitest for the frontend.
 
 ## Structure
 
-- The frontend talks to the API over HTTP only. No shared database access, and no Nuxt server routes that bypass Laravel. The only server route is the token-adding forwarder to Laravel.
-- The backend owns all data logic: filtering, sorting, pagination and totals. The frontend passes the user's intent to the API and renders the result. It never filters, sorts or sums data itself.
-- Business rules live in the backend, in a place independent of the HTTP layer (not in controllers).
-- Schema changes go through migrations, with foreign keys and indexes on the columns that are searched and filtered. Seed data goes through seeders.
+- Frontend and backend meet over HTTP only. The frontend has no database connection, and its single Nitro route does nothing but forward `/api/*` to Laravel with the workshop token added.
+- Filtering, sorting, pagination and totals happen in Laravel. The frontend sends the user's choices as query parameters or a request body and renders what comes back; it never filters, sorts or adds up data itself.
+- Business rules live in service classes under `backend/app/Services`, never in controllers, so they run without a request.
+- Every schema change is a migration. Relations get foreign keys; every column that is searched, filtered or sorted gets an index. Data goes in through seeders.
 - The frontend reads its API URL and token from environment variables.
 
 ## Data model
@@ -31,7 +31,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 ## Testing
 
 - Backend: a feature test for every endpoint, including unhappy paths, plus a test per business rule. Authenticate with `actingAsWorkshop()` (`Sanctum::actingAs`); the token path itself and the 401 of every endpoint are tested in `WorkshopAuthenticationTest`.
-- Search and filter tests assert both what is returned and what is excluded.
+- A search or filter test checks the matches it expects and also names the parts that must be left out.
 - Frontend: Vitest tests for components and composables, covering what renders from an API response and which request each user action or URL state produces.
 - Test behaviour, not implementation.
 

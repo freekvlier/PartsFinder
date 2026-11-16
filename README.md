@@ -43,9 +43,17 @@ Run Artisan through Sail (`./vendor/bin/sail artisan ...` in `backend/`).
 
 Claude Code was used throughout for writing and refactoring code, tests and documentation, under the rules in `AGENTS.md`; every change was reviewed before it was kept. Documentation lookups went through the Laravel Boost and Nuxt MCP servers rather than from memory.
 
+## Cut
+
+Left out on purpose, to finish the required scope first:
+
+- Part variants: see decision 4 in [DECISIONS.md](DECISIONS.md).
+- Idempotent import command: the catalogue comes from `PartSeeder` and `parts.json`.
+- Rate limiting and cache headers on `GET /api/parts`: not needed for a local example store.
+
 ## Next
 
 - Quote history: list and reopen a workshop's submitted quotes, download one as PDF.
-- Part variants: a `part_variants` table where each variant has its own colour, condition, price, stock and image, with quote lines pointing at a variant. Today a part has one price and one stock number shared by all its colours (see decision 2 in [DECISIONS.md](DECISIONS.md)).
+- Part variants: a `part_variants` table where each variant has its own colour, condition, price, stock and image, with quote lines pointing at a variant. Today a part has one price and one stock number shared by all its colours (see decision 4 in [DECISIONS.md](DECISIONS.md)).
 - Import and update the catalogue from a supplier file through an Artisan command.
 - End-to-end tests.
