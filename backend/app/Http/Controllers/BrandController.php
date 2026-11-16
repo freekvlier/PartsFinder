@@ -11,8 +11,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class BrandController extends Controller
 {
     /**
-     * List every brand with the number of parts that match the active search and condition.
-     * The brand filter itself is not applied, so a brand's count stays visible while it is selected.
+     * List the brands with how many parts match the active search and condition.
      *
      * @param  IndexBrandsRequest  $request  The validated query parameters.
      * @return AnonymousResourceCollection The brands by name, with their part counts.

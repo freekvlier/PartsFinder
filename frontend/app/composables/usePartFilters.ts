@@ -20,9 +20,7 @@ function oneOf<T extends string>(value: string | undefined, allowed: T[]) {
 }
 
 /**
- * The search, filters, sort and page of the parts overview. They live in the URL, so a filtered view can be shared
- * and survives a refresh; this reads them from there, turns them into the API's query parameters,
- * and changes them by navigating.
+ * The search, filters, sort and page of the parts overview, kept in the URL.
  */
 export function usePartFilters() {
     const route = useRoute()
@@ -41,12 +39,10 @@ export function usePartFilters() {
         'page': page.value
     }))
     const brandsQuery = computed(() => ({ q: q.value, condition: condition.value }))
-    // The sort only orders the parts, so it does not count as a filter.
     const hasFilters = computed(() => !!(q.value || brands.value.length || condition.value))
 
     /**
-     * Change one or more filters. Empty values are removed from the URL, and the page goes back to 1.
-     * Typing in the search box replaces the history entry instead of adding one per keystroke.
+     * Change filters in the URL: empty values are dropped and the page goes back to 1.
      */
     function change(changes: Filters, { replace = false } = {}) {
         const query = { ...route.query, ...changes, page: undefined }

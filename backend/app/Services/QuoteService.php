@@ -121,8 +121,7 @@ class QuoteService
     }
 
     /**
-     * Submit a draft quote: re-check the stock of every in-stock line, then snapshot the unit prices,
-     * store the totals and lock the quote.
+     * Submit a draft quote: check the stock, snapshot the unit prices, store the totals and lock it.
      *
      * @param  Quote  $quote  The draft quote.
      * @return Quote The submitted quote.

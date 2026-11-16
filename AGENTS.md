@@ -39,7 +39,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 
 - Lines of code are at most 120 characters, except generated files (`openapi.json`, `api.d.ts`) and framework stubs. ESLint enforces it in `frontend/`; in `backend/` keep to it by hand (Pint does not).
 - Keep it simple: use framework defaults. Don't add config, guards, factory states or helpers that the framework already covers.
-- Don't comment self-explanatory code, including in config, compose and env files. Comment only a non-obvious why.
+- No inline comments. Document functions with a docblock whose description is one line, plus `@param`/`@return`; put a non-obvious why in that line or in a clearer name.
 - Auth is Sanctum bearer tokens. `WorkshopSeeder` creates two workshops with fixed local tokens (`local-token-standard`, 0% discount; `local-token-discount`, 10%), and `DatabaseSeeder` only runs it in the `local` environment. `php artisan workshop:create {name} {discount=0}` creates a workshop and prints a generated token once.
 - Controllers are regular controllers with named methods, not invokable ones; they are expected to grow.
 - Return the model as is. Use an API resource only when the response differs from the model (computed fields, nested data). This overrides the "default to resources" line in `backend/CLAUDE.md`.

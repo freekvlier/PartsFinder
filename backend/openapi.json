@@ -50,7 +50,7 @@
         "/brands": {
             "get": {
                 "operationId": "brand.index",
-                "summary": "List every brand with the number of parts that match the active search and condition.\nThe brand filter itself is not applied, so a brand's count stays visible while it is selected",
+                "summary": "List the brands with how many parts match the active search and condition",
                 "tags": [
                     "Brand"
                 ],

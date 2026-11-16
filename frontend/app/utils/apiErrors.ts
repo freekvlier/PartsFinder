@@ -4,8 +4,7 @@ interface ApiErrorBody {
 }
 
 /**
- * Turn a failed API call into messages for the user: the validation messages when there are any,
- * otherwise the error message of the API.
+ * Turn a failed API call into user messages: the validation messages, otherwise the API's error message.
  */
 export function apiErrorMessages(error: unknown): string[] {
     const body = (error as { data?: ApiErrorBody } | null)?.data

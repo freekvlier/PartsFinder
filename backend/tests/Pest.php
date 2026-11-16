@@ -57,7 +57,7 @@ function actingAsWorkshop(float $discount = 0): Workshop
 {
     $workshop = Workshop::factory()->create(['discount_percentage' => $discount]);
 
-    auth()->forgetGuards(); // one app instance serves every request of a test; production does not
+    auth()->forgetGuards();
     test()->withToken($workshop->createToken('api')->plainTextToken);
 
     return $workshop;

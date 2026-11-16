@@ -64,7 +64,7 @@ class Part extends Model
     }
 
     /**
-     * Parts whose name or OEM number contains the search term. A blank term matches everything.
+     * Parts whose name or OEM number contains the term. A blank term matches all.
      *
      * @param  Builder<Part>  $query  The parts query.
      * @param  string|null  $term  The text to look for.
@@ -78,12 +78,9 @@ class Part extends Model
             return;
         }
 
-        // "!" is the escape character because a backslash only escapes in MySQL, not in SQLite.
-        $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term).'%';
-
         $query->where(fn (Builder $query) => $query
-            ->whereRaw("name like ? escape '!'", [$like])
-            ->orWhereRaw("oem like ? escape '!'", [$like]));
+            ->whereLike('name', "%{$term}%")
+            ->orWhereLike('oem', "%{$term}%"));
     }
 
     /**

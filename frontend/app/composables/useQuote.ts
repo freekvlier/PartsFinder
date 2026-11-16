@@ -10,6 +10,9 @@ function readStoredId(): string | null {
     }
 }
 
+/**
+ * Remember the quote id across refreshes. Skipped when storage is unavailable.
+ */
 function storeId(id: number | null) {
     try {
         if (id === null) {
@@ -18,13 +21,12 @@ function storeId(id: number | null) {
             localStorage.setItem(storageKey, String(id))
         }
     } catch {
-    // The quote still works without storage; it just is not restored after a refresh.
+        return
     }
 }
 
 /**
- * The workshop's open quote: shared state, the actions on it, and restoring it after a refresh.
- * Every action returns the quote as the API calculated it; nothing is added up here.
+ * The workshop's open quote: shared state, its actions, and restoring it after a refresh.
  */
 export function useQuote() {
     const quote = useState<Quote | null>('quote', () => null)

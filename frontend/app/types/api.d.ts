@@ -28,10 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * List every brand with the number of parts that match the active search and condition.
-         *     The brand filter itself is not applied, so a brand's count stays visible while it is selected
-         */
+        /** List the brands with how many parts match the active search and condition */
         get: operations["brand.index"];
         put?: never;
         post?: never;

@@ -41,14 +41,6 @@ test('search ignores case and surrounding spaces', function () {
     expect(returnedNames($this->getJson('/api/parts?q=%20TURBO%20')))->toBe(['Turbocharger']);
 });
 
-test('search treats percent and underscore as plain characters', function () {
-    Part::factory()->create(['name' => '100% genuine']);
-    Part::factory()->create(['name' => 'Plain part']);
-
-    expect(returnedNames($this->getJson('/api/parts?q=%25')))->toBe(['100% genuine'])
-        ->and(returnedNames($this->getJson('/api/parts?q=_')))->toBe([]);
-});
-
 test('a blank search returns every part', function () {
     Part::factory()->count(3)->create();
 

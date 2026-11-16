@@ -34,7 +34,7 @@ test('the workshop seeder creates a workshop without and one with 10% discount, 
 
     $this->withToken('local-token-standard')->getJson('/api/me')->assertOk()->assertJsonPath('data.discountPercentage', 0);
 
-    auth()->forgetGuards(); // one app instance serves both requests in a test; production does not
+    auth()->forgetGuards();
     $this->withToken('local-token-discount')->getJson('/api/me')->assertOk()->assertJsonPath('data.discountPercentage', 10);
 });
 

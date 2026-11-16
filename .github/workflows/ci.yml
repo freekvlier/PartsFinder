@@ -1,0 +1,131 @@
+name: ci
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    backend:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  coverage: none
+
+            - name: Install dependencies
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: backend
+
+            - name: Prepare environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+
+            - name: Check code style
+              run: vendor/bin/pint --test
+
+            - name: Test
+              run: php artisan test
+
+    frontend:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: frontend
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  package_json_file: frontend/package.json
+
+            - name: Install node
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: pnpm
+                  cache-dependency-path: frontend/pnpm-lock.yaml
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Lint
+              run: pnpm lint
+
+            - name: Typecheck
+              run: pnpm typecheck
+
+            - name: Test
+              run: pnpm test
+
+    contract:
+        runs-on: ubuntu-latest
+        env:
+            DB_CONNECTION: sqlite
+            DB_DATABASE: database/database.sqlite
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Install PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  coverage: none
+
+            - name: Install backend dependencies
+              uses: ramsey/composer-install@v3
+              with:
+                  working-directory: backend
+
+            - name: Export the OpenAPI document
+              working-directory: backend
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+                  touch database/database.sqlite
+                  php artisan migrate --force
+                  php artisan scramble:export
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  package_json_file: frontend/package.json
+
+            - name: Install node
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: pnpm
+                  cache-dependency-path: frontend/pnpm-lock.yaml
+
+            - name: Generate the API types
+              working-directory: frontend
+              run: |
+                  pnpm install --frozen-lockfile
+                  pnpm generate:api-types
+
+            - name: Check the generated files are committed
+              run: git diff --exit-code -- backend/openapi.json frontend/app/types/api.d.ts

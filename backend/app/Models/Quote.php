@@ -72,8 +72,7 @@ class Quote extends Model
     }
 
     /**
-     * The totals of the quote: the stored ones once submitted, otherwise calculated live from current prices.
-     * Needs the workshop, lines and their parts loaded.
+     * The totals: stored once submitted, otherwise calculated live from current prices.
      *
      * @return array{subtotal: int, discount: int, vat: int, total: int}
      */

@@ -6,8 +6,7 @@ use App\Models\Workshop;
 use Illuminate\Database\Seeder;
 
 /**
- * The hardcoded tokens below are for local development only; DatabaseSeeder runs this seeder in the local environment.
- * Create real workshops with `php artisan workshop:create`.
+ * Local development workshops with fixed tokens. Create real workshops with `workshop:create`.
  */
 class WorkshopSeeder extends Seeder
 {
