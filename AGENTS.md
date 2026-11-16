@@ -50,7 +50,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 ## Commands
 
 - Run every Artisan and Composer command in `backend/` through Sail (`./vendor/bin/sail artisan ...`, `sail artisan test`), not on the host. The host cannot reach the `mysql` host name.
-- Backend: format with `vendor/bin/pint --format agent`. Frontend (in `frontend/`): `pnpm test`, `pnpm lint`, `pnpm typecheck`.
+- Backend: format with `vendor/bin/pint --format agent`. Frontend (in `frontend/`, on the host): `pnpm test`, `pnpm lint`, `pnpm typecheck`.
 - `composer require` runs `boost:update`, which rewrites `backend/AGENTS.md` and `backend/CLAUDE.md`. Check the diff afterwards (the PHP version line must stay 8.5).
 - Use the Laravel Boost `search-docs` tool for Laravel and Sanctum questions and the Nuxt MCP docs for Nuxt questions, instead of answering from memory.
 
@@ -68,12 +68,11 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 - Prices arrive as integer cents; display them with `formatPrice()` from `app/utils`.
 - The id of the open quote lives in the `quote-id` cookie, so the server render already contains the quote. The layout restores it once per render with `callOnce('quote', restore)`. Components run API actions through `useApiAction()` for the error messages.
 - Page and component tests mount with `mountSuspended` and mock the API with `registerEndpoint`; call `clearNuxtData()` before each test, because `useFetch` caches by key. Wait for URL or state changes with `vi.waitFor`, never with a sleep. Tests that start the real server (`apiProxy.test.ts`) must set `NUXT_API_BASE` and `NUXT_API_TOKEN` in `process.env`, or a local `frontend/.env` overrides them.
-- Env variables (private runtime config, see `frontend/.env.example`): `NUXT_API_BASE` (Laravel API URL, in Docker `http://laravel.test/api`) and `NUXT_API_TOKEN`.
+- Env variables (private runtime config, see `frontend/.env.example`): `NUXT_API_BASE` (Laravel API URL, `http://localhost/api` for the local Sail stack) and `NUXT_API_TOKEN`.
 
 ## Docker
 
-- `docker compose up` in the repo root includes `backend/compose.yaml` (Sail) and `frontend/compose.yaml`. Each part owns its own file.
-- The root stack and a separately running Sail stack use the same host ports (80, 3306, 8080). Don't stop the user's running stack; override `APP_PORT`, `FORWARD_DB_PORT`, `FORWARD_PMA_PORT` and `FRONTEND_PORT` to test.
+- Only the backend runs in Docker, through Sail (`backend/compose.yaml`). The frontend runs on the host with Node 24 and pnpm (`make dev`) and reaches the API on `http://localhost/api`.
+- A separately running Sail stack uses the same host ports (80, 3306, 8080). Don't stop the user's running stack; override `APP_PORT`, `FORWARD_DB_PORT` and `FORWARD_PMA_PORT` to test.
 - Never run `docker compose down -v` or recreate volumes without asking: they hold the user's data.
-- The frontend container runs the stock `node:24` image as its `node` user (uid 1000), so what it writes on the bind mount belongs to a host user with uid 1000. Another uid needs a Dockerfile that remaps `node`. Should `.nuxt` or `node_modules` ever turn root-owned anyway, `chown` them through a throwaway container, then run `pnpm nuxt prepare`.
-- Start flow: `make setup` (env files and packages), `make up` (starts the stack detached), then `make seed` (generates `APP_KEY` if empty, then `migrate:fresh --seed`). `make attach` follows the logs of all containers; `make down` stops the stack. The frontend defaults to the fixed local token `local-token-standard`, so no token needs copying.
+- Start flow: `make setup` (env files and packages), `make up` (starts the Sail stack detached), `make seed` (generates `APP_KEY` if empty, then `migrate:fresh --seed`), then `make dev` (Nuxt on port 3000). `make attach` follows the backend logs; `make down` stops the stack. The frontend defaults to the fixed local token `local-token-standard`, so no token needs copying.
