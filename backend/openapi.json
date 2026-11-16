@@ -717,7 +717,7 @@
             "AddQuoteLineRequest": {
                 "type": "object",
                 "properties": {
-                    "partId": {
+                    "part_id": {
                         "type": "integer"
                     },
                     "quantity": {
@@ -728,11 +728,12 @@
                         "type": [
                             "string",
                             "null"
-                        ]
+                        ],
+                        "maxLength": 100
                     }
                 },
                 "required": [
-                    "partId",
+                    "part_id",
                     "quantity"
                 ],
                 "title": "AddQuoteLineRequest"
@@ -786,13 +787,13 @@
                             "used"
                         ]
                     },
-                    "priceCents": {
+                    "price_cents": {
                         "type": "integer"
                     },
-                    "stockQuantity": {
+                    "stock_quantity": {
                         "type": "integer"
                     },
-                    "inStock": {
+                    "in_stock": {
                         "type": "boolean"
                     },
                     "image": {
@@ -812,13 +813,64 @@
                     "brand",
                     "category",
                     "condition",
-                    "priceCents",
-                    "stockQuantity",
-                    "inStock",
+                    "price_cents",
+                    "stock_quantity",
+                    "in_stock",
                     "image",
                     "colours"
                 ],
                 "title": "PartResource"
+            },
+            "QuoteLineResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "part_id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "oem": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "colour": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
+                    "quantity": {
+                        "type": "integer"
+                    },
+                    "backorder": {
+                        "type": "boolean"
+                    },
+                    "unit_price_cents": {
+                        "type": "integer"
+                    },
+                    "line_total_cents": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "id",
+                    "part_id",
+                    "name",
+                    "oem",
+                    "image",
+                    "colour",
+                    "quantity",
+                    "backorder",
+                    "unit_price_cents",
+                    "line_total_cents"
+                ],
+                "title": "QuoteLineResource"
             },
             "QuoteResource": {
                 "type": "object",
@@ -833,70 +885,22 @@
                             "submitted"
                         ]
                     },
-                    "submittedAt": {
+                    "submitted_at": {
                         "type": [
                             "string",
                             "null"
                         ]
                     },
-                    "discountPercentage": {
+                    "discount_percentage": {
                         "type": "number"
                     },
-                    "vatPercentage": {
-                        "type": "integer",
-                        "const": 21
+                    "vat_percentage": {
+                        "type": "number"
                     },
                     "lines": {
                         "type": "array",
                         "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "integer"
-                                },
-                                "partId": {
-                                    "type": "integer"
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "oem": {
-                                    "type": "string"
-                                },
-                                "image": {
-                                    "type": "string"
-                                },
-                                "colour": {
-                                    "type": [
-                                        "string",
-                                        "null"
-                                    ]
-                                },
-                                "quantity": {
-                                    "type": "integer"
-                                },
-                                "backorder": {
-                                    "type": "boolean"
-                                },
-                                "unitPriceCents": {
-                                    "type": "integer"
-                                },
-                                "lineTotalCents": {
-                                    "type": "integer"
-                                }
-                            },
-                            "required": [
-                                "id",
-                                "partId",
-                                "name",
-                                "oem",
-                                "image",
-                                "colour",
-                                "quantity",
-                                "backorder",
-                                "unitPriceCents",
-                                "lineTotalCents"
-                            ]
+                            "$ref": "#/components/schemas/QuoteLineResource"
                         }
                     },
                     "warnings": {
@@ -910,7 +914,7 @@
                                 "message": {
                                     "type": "string"
                                 },
-                                "lineIds": {
+                                "line_ids": {
                                     "type": "array",
                                     "items": {
                                         "type": "integer"
@@ -920,40 +924,40 @@
                             "required": [
                                 "code",
                                 "message",
-                                "lineIds"
+                                "line_ids"
                             ]
                         }
                     },
                     "totals": {
                         "type": "object",
                         "properties": {
-                            "subtotalCents": {
+                            "subtotal_cents": {
                                 "type": "integer"
                             },
-                            "discountCents": {
+                            "discount_cents": {
                                 "type": "integer"
                             },
-                            "vatCents": {
+                            "vat_cents": {
                                 "type": "integer"
                             },
-                            "totalCents": {
+                            "total_cents": {
                                 "type": "integer"
                             }
                         },
                         "required": [
-                            "subtotalCents",
-                            "discountCents",
-                            "vatCents",
-                            "totalCents"
+                            "subtotal_cents",
+                            "discount_cents",
+                            "vat_cents",
+                            "total_cents"
                         ]
                     }
                 },
                 "required": [
                     "id",
                     "status",
-                    "submittedAt",
-                    "discountPercentage",
-                    "vatPercentage",
+                    "submitted_at",
+                    "discount_percentage",
+                    "vat_percentage",
                     "lines",
                     "warnings",
                     "totals"
@@ -971,7 +975,8 @@
                         "type": [
                             "string",
                             "null"
-                        ]
+                        ],
+                        "maxLength": 100
                     }
                 },
                 "title": "UpdateQuoteLineRequest"
@@ -985,14 +990,14 @@
                     "name": {
                         "type": "string"
                     },
-                    "discountPercentage": {
+                    "discount_percentage": {
                         "type": "number"
                     }
                 },
                 "required": [
                     "id",
                     "name",
-                    "discountPercentage"
+                    "discount_percentage"
                 ],
                 "title": "WorkshopResource"
             }

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('workshop_id')->constrained()->cascadeOnDelete();
             $table->string('status')->index();
+            $table->decimal('discount_percentage', 5, 2);
+            $table->decimal('vat_percentage', 5, 2);
             $table->timestamp('submitted_at')->nullable();
             $table->unsignedBigInteger('subtotal_cents')->nullable();
             $table->unsignedBigInteger('discount_cents')->nullable();

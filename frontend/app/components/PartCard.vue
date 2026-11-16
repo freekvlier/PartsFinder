@@ -27,11 +27,7 @@ defineProps<{ part: Part }>()
                 color="neutral"
                 variant="subtle"
             />
-            <UBadge
-                :label="part.condition === 'new' ? 'New' : 'Used'"
-                :color="part.condition === 'new' ? 'primary' : 'warning'"
-                variant="subtle"
-            />
+            <PartConditionBadge :condition="part.condition" />
         </div>
 
         <h2 class="font-semibold">
@@ -49,17 +45,13 @@ defineProps<{ part: Part }>()
         <div class="mt-auto flex items-end justify-between gap-2 pt-2">
             <div>
                 <p class="text-lg font-semibold">
-                    {{ formatPrice(part.priceCents) }}
+                    {{ formatPrice(part.price_cents) }}
                 </p>
                 <p class="text-xs text-muted">
                     excl. VAT
                 </p>
             </div>
-            <UBadge
-                :label="part.inStock ? `In stock (${part.stockQuantity})` : 'Out of stock'"
-                :color="part.inStock ? 'success' : 'error'"
-                variant="subtle"
-            />
+            <PartStockBadge :part="part" />
         </div>
     </UCard>
 </template>

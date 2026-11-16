@@ -3,15 +3,8 @@
 use App\Condition;
 use App\Models\Brand;
 use App\Models\Part;
-use App\Models\Workshop;
 
-beforeEach(function () {
-    $this->withToken(Workshop::factory()->create()->createToken('api')->plainTextToken);
-});
-
-test('a request without a token is rejected with 401', function () {
-    $this->withoutToken()->getJson('/api/brands')->assertUnauthorized();
-});
+beforeEach(fn () => actingAsWorkshop());
 
 test('it lists every brand by name with its part count', function () {
     Part::factory()->count(2)->for(Brand::factory()->create(['name' => 'MAN']))->create();

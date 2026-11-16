@@ -69,6 +69,21 @@
 
 **Trade-offs.** The server must process every change. The frontend cannot show a new total or reject an over-stock quantity on its own, so each add, update or remove waits for a response before the quote drawer updates.
 
+## 7. A quote stores its own discount and VAT rates
+
+**Chosen.** `quotes.discount_percentage` and `quotes.vat_percentage` are copied from the workshop and from `config('quotes.vat_percentage')` when the quote is created. `Quote::totals()` and `QuoteResource` read them from the quote; `QuoteCalculator` is a pure function of line totals and the two rates.
+
+**Rejected.**
+- Reading the live workshop discount and the VAT config at calculation time, with the calculator resolved from the container inside the model.
+- Snapshotting the rates on submit only, like the unit prices.
+
+**Why.**
+- A quote is an offer under the terms of the moment it was made. The response showed the live workshop discount next to a stored discount amount; after a discount change the two no longer matched.
+- The model needs no container or config access, so the totals maths is testable with plain values and the model has no hidden dependencies.
+- One place reads the config: `QuoteService::create`.
+
+**Trade-offs.** A draft quote keeps the rates from its creation while its prices stay live. A workshop that gets a new discount sees it in its next quote, not in an open draft. If a draft should follow rate changes, `QuoteService` can refresh the two columns on the next change.
+
 ## 6. The frontend's API types are generated from the backend
 
 **Chosen.** Scramble reads the Laravel routes, form requests, resources and docblocks and exports `backend/openapi.json`. `openapi-typescript` turns that into `frontend/app/types/api.d.ts`. `make types` runs both steps, and both generated files are committed. The frontend types (`Part`, `Quote`, `PartsResponse` and so on) are aliases of the generated ones.
@@ -85,5 +100,18 @@
 
 **Trade-offs.**
 - It only works when `make types` is run after an API change; a forgotten run leaves stale types. The generated files are committed so a diff shows the contract change.
-- Scramble infers the shapes from the code, so some code needs help. Chaining query scopes hid the paginator and dropped `meta` from the spec until the query stayed typed, and a literal such as the VAT rate shows up as the type `21`.
+- Scramble infers the shapes from the code, so some code needs help. Chaining query scopes hid the paginator and dropped `meta` from the spec until the query stayed typed, and a value Scramble cannot follow (a config value through the container) needs an inline `/** @var int */`.
 - The types are checked at compile time only. If the backend sends something its own docs do not describe, nothing fails in the browser.
+
+## 8. The API uses snake_case
+
+**Chosen.** Every field name in the contract is snake_case: query parameters (`per_page`), request bodies (`part_id`) and responses (`price_cents`, `meta.last_page`). Resources add computed fields but never rename a column.
+
+**Rejected.** camelCase, the JavaScript convention, which the first resources used.
+
+**Why.**
+- It is what Laravel produces by itself: a model's `toArray()`, the paginator's `meta` and validation error keys are all snake_case. A plain model or paginator can be returned without a resource, as the "return the model as is" rule intends.
+- One name from database column to TypeScript type. A search for `price_cents` finds the migration, the model, the resource, the spec, the frontend and the tests.
+- Less code: no pagination override, and resources that only list what is computed.
+
+**Trade-offs.** Frontend code reads `part.price_cents` instead of `part.priceCents`. Types are generated either way, so nothing else in the frontend cares.

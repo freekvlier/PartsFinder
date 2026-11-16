@@ -15,10 +15,10 @@ beforeEach(function () {
 test('it adds a part to the quote', function () {
     $part = Part::factory()->create(['name' => 'DAF Brake disc', 'price_cents' => 21000, 'stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2])
         ->assertCreated()
         ->assertJsonCount(1, 'data.lines')
-        ->assertJsonPath('data.lines.0.partId', $part->id)
+        ->assertJsonPath('data.lines.0.part_id', $part->id)
         ->assertJsonPath('data.lines.0.quantity', 2)
         ->assertJsonPath('data.lines.0.backorder', false)
         ->assertJsonPath('data.warnings', []);
@@ -29,8 +29,8 @@ test('it adds a part to the quote', function () {
 test('adding a part that is already on the quote increases the quantity instead of adding a second line', function () {
     $part = Part::factory()->create(['stock_quantity' => 10]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2])->assertCreated();
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 3])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2])->assertCreated();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 3])
         ->assertJsonCount(1, 'data.lines')
         ->assertJsonPath('data.lines.0.quantity', 5);
 
@@ -40,9 +40,9 @@ test('adding a part that is already on the quote increases the quantity instead 
 test('the same coloured part in the same colour merges, in another colour it is a separate line', function () {
     $part = Part::factory()->withColours(['white', 'red'])->create(['stock_quantity' => 10]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'white']);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2, 'colour' => 'white']);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'red'])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'white']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2, 'colour' => 'white']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'red'])
         ->assertJsonCount(2, 'data.lines')
         ->assertJsonPath('data.lines.0.colour', 'white')
         ->assertJsonPath('data.lines.0.quantity', 3)
@@ -53,10 +53,10 @@ test('the same coloured part in the same colour merges, in another colour it is 
 test('a part with colours needs one of its colours', function () {
     $part = Part::factory()->withColours(['white', 'red'])->create(['stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('colour');
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'green'])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'green'])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('colour');
 
@@ -67,7 +67,7 @@ test('a colour of another part is not accepted', function () {
     Part::factory()->withColours(['green'])->create();
     $part = Part::factory()->withColours(['white'])->create(['stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'green'])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'green'])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('colour');
 });
@@ -75,7 +75,7 @@ test('a colour of another part is not accepted', function () {
 test('a part without colours does not take a colour', function () {
     $part = Part::factory()->create(['stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'white'])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'white'])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('colour');
 });
@@ -83,22 +83,22 @@ test('a part without colours does not take a colour', function () {
 test('the quantity must be an integer of 1 or more', function (mixed $quantity) {
     $part = Part::factory()->create(['stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => $quantity])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => $quantity])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('quantity');
 })->with([0, -1, 'abc', 1.5, null]);
 
 test('the part must exist', function () {
-    $this->postJson($this->url, ['partId' => 9999, 'quantity' => 1])
+    $this->postJson($this->url, ['part_id' => 9999, 'quantity' => 1])
         ->assertUnprocessable()
-        ->assertJsonValidationErrors('partId');
+        ->assertJsonValidationErrors('part_id');
 });
 
 test('a part in stock cannot be quoted beyond its stock', function () {
     $part = Part::factory()->create(['stock_quantity' => 3]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 3])->assertCreated();
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 3])->assertCreated();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('quantity');
 
@@ -108,19 +108,19 @@ test('a part in stock cannot be quoted beyond its stock', function () {
 test('the stock is shared by all colours of a part', function () {
     $part = Part::factory()->withColours(['white', 'red'])->create(['stock_quantity' => 3]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2, 'colour' => 'white'])->assertCreated();
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2, 'colour' => 'red'])
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2, 'colour' => 'white'])->assertCreated();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2, 'colour' => 'red'])
         ->assertUnprocessable()
         ->assertJsonValidationErrors('quantity');
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'red'])->assertCreated();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'red'])->assertCreated();
 });
 
 test('a part without stock can be quoted in any quantity and is flagged as backorder with a warning', function () {
     $part = Part::factory()->create(['stock_quantity' => 0]);
-    $inStock = Part::factory()->create(['stock_quantity' => 5]);
+    $in_stock = Part::factory()->create(['stock_quantity' => 5]);
 
-    $this->postJson($this->url, ['partId' => $inStock->id, 'quantity' => 1]);
-    $response = $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 40])
+    $this->postJson($this->url, ['part_id' => $in_stock->id, 'quantity' => 1]);
+    $response = $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 40])
         ->assertCreated()
         ->assertJsonPath('data.lines.0.backorder', false)
         ->assertJsonPath('data.lines.1.backorder', true)
@@ -129,7 +129,7 @@ test('a part without stock can be quoted in any quantity and is flagged as backo
         ->assertJsonPath('data.warnings.0.code', 'backorder');
 
     $backorderLineId = $this->quote->lines()->where('part_id', $part->id)->value('id');
-    expect($response->json('data.warnings.0.lineIds'))->toBe([$backorderLineId]);
+    expect($response->json('data.warnings.0.line_ids'))->toBe([$backorderLineId]);
 });
 
 test('it changes the quantity of a line', function () {
@@ -162,7 +162,7 @@ test('an invalid quantity on a line is rejected', function (mixed $quantity) {
 
 test('it changes the colour of a line', function () {
     $part = Part::factory()->withColours(['white', 'red'])->create(['stock_quantity' => 5]);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2, 'colour' => 'white']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2, 'colour' => 'white']);
     $line = $this->quote->lines()->first();
 
     $this->patchJson("{$this->url}/{$line->id}", ['colour' => 'red'])
@@ -173,8 +173,8 @@ test('it changes the colour of a line', function () {
 
 test('changing the colour of a line to a colour that is already on the quote merges the lines', function () {
     $part = Part::factory()->withColours(['white', 'red'])->create(['stock_quantity' => 10]);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 2, 'colour' => 'white']);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 3, 'colour' => 'red']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 2, 'colour' => 'white']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 3, 'colour' => 'red']);
     $white = $this->quote->lines()->first();
 
     $this->patchJson("{$this->url}/{$white->id}", ['colour' => 'red'])
@@ -186,7 +186,7 @@ test('changing the colour of a line to a colour that is already on the quote mer
 
 test('changing a line to a colour the part does not have is rejected', function () {
     $part = Part::factory()->withColours(['white'])->create(['stock_quantity' => 5]);
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1, 'colour' => 'white']);
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1, 'colour' => 'white']);
     $line = $this->quote->lines()->first();
 
     $this->patchJson("{$this->url}/{$line->id}", ['colour' => 'green'])
@@ -217,7 +217,7 @@ test('a submitted quote cannot be changed and answers 409', function () {
         'total_cents' => 0,
     ]);
 
-    $this->postJson($this->url, ['partId' => $part->id, 'quantity' => 1])->assertConflict();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1])->assertConflict();
     $this->patchJson("{$this->url}/{$line->id}", ['quantity' => 2])->assertConflict();
     $this->deleteJson("{$this->url}/{$line->id}")->assertConflict();
 

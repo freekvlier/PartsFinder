@@ -11,11 +11,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['workshop_id', 'status', 'submitted_at', 'subtotal_cents', 'discount_cents', 'vat_cents', 'total_cents'])]
+#[Fillable([
+    'workshop_id',
+    'status',
+    'discount_percentage',
+    'vat_percentage',
+    'submitted_at',
+    'subtotal_cents',
+    'discount_cents',
+    'vat_cents',
+    'total_cents',
+])]
 class Quote extends Model
 {
     /** @use HasFactory<QuoteFactory> */
     use HasFactory;
+
+    /** The relations `QuoteResource` reads; load them before transforming a quote. */
+    public const RESOURCE_RELATIONS = ['workshop', 'lines.part', 'lines.colour'];
 
     /**
      * The attribute casts of the model.
@@ -26,7 +39,13 @@ class Quote extends Model
     {
         return [
             'status' => QuoteStatus::class,
+            'discount_percentage' => 'float',
+            'vat_percentage' => 'float',
             'submitted_at' => 'datetime',
+            'subtotal_cents' => 'integer',
+            'discount_cents' => 'integer',
+            'vat_cents' => 'integer',
+            'total_cents' => 'integer',
         ];
     }
 
@@ -72,7 +91,7 @@ class Quote extends Model
     }
 
     /**
-     * The totals: stored once submitted, otherwise calculated live from current prices.
+     * The totals: stored once submitted, otherwise calculated live from the line totals and the quote's own rates.
      *
      * @return array{subtotal: int, discount: int, vat: int, total: int}
      */
@@ -87,9 +106,10 @@ class Quote extends Model
             ];
         }
 
-        return (new QuoteCalculator)->totals(
-            $this->lines->map(fn (QuoteLine $line) => $line->part->price_cents * $line->quantity)->all(),
-            $this->workshop->discount_percentage,
+        return QuoteCalculator::totals(
+            $this->lines->map(fn (QuoteLine $line) => $line->totalCents())->all(),
+            $this->discount_percentage,
+            $this->vat_percentage,
         );
     }
 }

@@ -27,9 +27,9 @@ class PartResource extends JsonResource
             'brand' => $this->brand->name,
             'category' => $this->category->name,
             'condition' => $this->condition->value,
-            'priceCents' => $this->price_cents,
-            'stockQuantity' => $this->stock_quantity,
-            'inStock' => $this->in_stock,
+            'price_cents' => $this->price_cents,
+            'stock_quantity' => $this->stock_quantity,
+            'in_stock' => $this->in_stock,
             'image' => $this->image,
             'colours' => $this->colours->map(fn (Colour $colour): string => $colour->name)->all(),
         ];

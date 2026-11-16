@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const { quote, isOpen, restore } = useQuote()
-const { workshop } = await useWorkshop()
-
-onMounted(restore)
+const [{ workshop }] = await Promise.all([useWorkshop(), callOnce('quote', restore)])
 </script>
 
 <template>

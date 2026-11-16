@@ -26,9 +26,7 @@ class QuoteController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $quote = $this->quoteService->create($request->user())->load(['workshop', 'lines.part', 'lines.colour']);
-
-        return $quote->toResource()->response()->setStatusCode(201);
+        return $this->quoteService->create($request->user())->toResource()->response()->setStatusCode(201);
     }
 
     /**
@@ -39,7 +37,7 @@ class QuoteController extends Controller
      */
     public function show(Quote $quote): JsonResource
     {
-        return $quote->load(['workshop', 'lines.part', 'lines.colour'])->toResource();
+        return $quote->load(Quote::RESOURCE_RELATIONS)->toResource();
     }
 
     /**

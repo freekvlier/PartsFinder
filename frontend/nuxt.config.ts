@@ -1,7 +1,8 @@
 export default defineNuxtConfig({
     modules: [
         '@nuxt/eslint',
-        '@nuxt/ui'
+        '@nuxt/ui',
+        '@vueuse/nuxt'
     ],
 
     devtools: {
@@ -16,6 +17,12 @@ export default defineNuxtConfig({
     },
 
     compatibilityDate: '2026-06-30',
+
+    typescript: {
+        tsConfig: {
+            include: ['../test/**/*']
+        }
+    },
 
     eslint: {
         config: {

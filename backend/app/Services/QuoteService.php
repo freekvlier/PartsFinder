@@ -14,14 +14,20 @@ use Illuminate\Validation\ValidationException;
 class QuoteService
 {
     /**
-     * Start a new, empty draft quote for a workshop.
+     * Start a new, empty draft quote for a workshop. The quote keeps the discount and VAT rates of that moment.
      *
      * @param  Workshop  $workshop  The workshop the quote belongs to.
      * @return Quote The new draft quote.
      */
     public function create(Workshop $workshop): Quote
     {
-        return $workshop->quotes()->create(['status' => QuoteStatus::Draft]);
+        $quote = $workshop->quotes()->create([
+            'status' => QuoteStatus::Draft,
+            'discount_percentage' => $workshop->discount_percentage,
+            'vat_percentage' => config('quotes.vat_percentage'),
+        ]);
+
+        return $this->reloadWithRelations($quote);
     }
 
     /**
@@ -63,22 +69,18 @@ class QuoteService
      *
      * @param  Quote  $quote  The draft quote.
      * @param  QuoteLine  $line  The line to change.
-     * @param  int|null  $quantity  The new quantity, or null to keep it.
-     * @param  bool  $changeColour  Whether the colour is part of the change.
-     * @param  string|null  $colourName  The new colour name when the colour changes.
+     * @param  array{quantity?: int, colour?: string|null}  $changes  The changes; an absent key keeps the value.
      * @return Quote The quote with its lines.
      *
      * @throws ValidationException When the colour or quantity is not allowed.
      */
-    public function updateLine(
-        Quote $quote,
-        QuoteLine $line,
-        ?int $quantity,
-        bool $changeColour,
-        ?string $colourName,
-    ): Quote {
+    public function updateLine(Quote $quote, QuoteLine $line, array $changes): Quote
+    {
         $part = $line->part;
-        $colour = $changeColour ? $this->resolveColour($part, $colourName) : $line->colour;
+        $colour = array_key_exists('colour', $changes)
+            ? $this->resolveColour($part, $changes['colour'])
+            : $line->colour;
+        $quantity = isset($changes['quantity']) ? (int) $changes['quantity'] : $line->quantity;
 
         DB::transaction(function () use ($quote, $line, $part, $quantity, $colour) {
             $duplicate = $quote->lines()
@@ -87,7 +89,7 @@ class QuoteService
                 ->whereKeyNot($line->id)
                 ->first();
 
-            $newQuantity = ($quantity ?? $line->quantity) + ($duplicate?->quantity ?? 0);
+            $newQuantity = $quantity + ($duplicate?->quantity ?? 0);
             $otherLines = $quote->lines()
                 ->where('part_id', $part->id)
                 ->whereKeyNot($line->id)
@@ -235,6 +237,6 @@ class QuoteService
      */
     private function reloadWithRelations(Quote $quote): Quote
     {
-        return $quote->fresh(['workshop', 'lines.part', 'lines.colour']);
+        return $quote->fresh(Quote::RESOURCE_RELATIONS);
     }
 }

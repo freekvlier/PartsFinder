@@ -6,10 +6,10 @@ use App\Models\Part;
 use Illuminate\Database\QueryException;
 
 test('a part is in stock when its stock quantity is above zero', function () {
-    $inStock = Part::factory()->create(['stock_quantity' => 3]);
+    $in_stock = Part::factory()->create(['stock_quantity' => 3]);
     $soldOut = Part::factory()->create(['stock_quantity' => 0]);
 
-    expect($inStock->in_stock)->toBeTrue()
+    expect($in_stock->in_stock)->toBeTrue()
         ->and($soldOut->in_stock)->toBeFalse();
 });
 

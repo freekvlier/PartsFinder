@@ -2,24 +2,13 @@
 import type { QuoteLine } from '~/types/quotes'
 
 const { quote, isOpen, pending, changeQuantity, removeLine, submit, startNew } = useQuote()
-
-const errors = ref<string[]>([])
+const { errors, run } = useApiAction()
 
 const isSubmitted = computed(() => quote.value?.status === 'submitted')
 
 function updateQuantity(line: QuoteLine, value: number | null | undefined) {
     if (value && value !== line.quantity) {
         run(() => changeQuantity(line.id, value))
-    }
-}
-
-async function run(action: () => Promise<unknown>) {
-    errors.value = []
-
-    try {
-        await action()
-    } catch (error) {
-        errors.value = apiErrorMessages(error)
     }
 }
 </script>
@@ -59,7 +48,7 @@ async function run(action: () => Promise<unknown>) {
 
                     <div class="flex min-w-0 flex-1 flex-col gap-1">
                         <NuxtLink
-                            :to="`/parts/${line.partId}`"
+                            :to="`/parts/${line.part_id}`"
                             class="truncate font-medium hover:underline"
                             @click="isOpen = false"
                         >
@@ -90,11 +79,11 @@ async function run(action: () => Promise<unknown>) {
                                 v-else
                                 class="text-sm"
                             >
-                                {{ line.quantity }} × {{ formatPrice(line.unitPriceCents) }}
+                                {{ line.quantity }} × {{ formatPrice(line.unit_price_cents) }}
                             </span>
 
                             <span class="font-medium">
-                                {{ formatPrice(line.lineTotalCents) }}
+                                {{ formatPrice(line.line_total_cents) }}
                             </span>
 
                             <UButton
@@ -130,27 +119,27 @@ async function run(action: () => Promise<unknown>) {
                     <dt class="text-muted">
                         Subtotal
                     </dt>
-                    <dd>{{ formatPrice(quote.totals.subtotalCents) }}</dd>
+                    <dd>{{ formatPrice(quote.totals.subtotal_cents) }}</dd>
                 </div>
                 <div
-                    v-if="quote.totals.discountCents > 0"
+                    v-if="quote.totals.discount_cents > 0"
                     class="flex justify-between"
                     data-testid="quote-discount"
                 >
                     <dt class="text-muted">
-                        Discount ({{ quote.discountPercentage }}%)
+                        Discount ({{ quote.discount_percentage }}%)
                     </dt>
-                    <dd>-{{ formatPrice(quote.totals.discountCents) }}</dd>
+                    <dd>-{{ formatPrice(quote.totals.discount_cents) }}</dd>
                 </div>
                 <div class="flex justify-between">
                     <dt class="text-muted">
-                        VAT ({{ quote.vatPercentage }}%)
+                        VAT ({{ quote.vat_percentage }}%)
                     </dt>
-                    <dd>{{ formatPrice(quote.totals.vatCents) }}</dd>
+                    <dd>{{ formatPrice(quote.totals.vat_cents) }}</dd>
                 </div>
                 <div class="flex justify-between border-t border-default pt-2 text-base font-semibold">
                     <dt>Total</dt>
-                    <dd>{{ formatPrice(quote.totals.totalCents) }}</dd>
+                    <dd>{{ formatPrice(quote.totals.total_cents) }}</dd>
                 </div>
             </dl>
         </template>

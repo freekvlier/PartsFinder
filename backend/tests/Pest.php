@@ -2,6 +2,7 @@
 
 use App\Models\Workshop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 /*
@@ -51,14 +52,9 @@ function something()
 }
 
 /**
- * Authenticate the following requests of the test as a new workshop with the given discount.
+ * Authenticate the requests of the test as a new workshop with the given discount, through Sanctum's test helper.
  */
 function actingAsWorkshop(float $discount = 0): Workshop
 {
-    $workshop = Workshop::factory()->create(['discount_percentage' => $discount]);
-
-    auth()->forgetGuards();
-    test()->withToken($workshop->createToken('api')->plainTextToken);
-
-    return $workshop;
+    return Sanctum::actingAs(Workshop::factory()->create(['discount_percentage' => $discount]));
 }

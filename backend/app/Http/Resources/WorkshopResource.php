@@ -22,7 +22,7 @@ class WorkshopResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'discountPercentage' => $this->discount_percentage,
+            'discount_percentage' => $this->discount_percentage,
         ];
     }
 }

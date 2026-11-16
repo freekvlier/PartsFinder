@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { getQuery, readBody, setResponseStatus } from 'h3'
+import type { HTTPMethod } from 'h3'
 import QuoteSummary from '~/components/QuoteSummary.vue'
 import { makeLine, makeQuote, noTotals } from '../fixtures'
 
@@ -9,7 +10,7 @@ interface Call { method: string, body?: unknown }
 let calls: Call[]
 let response: { status?: number, body: unknown }
 
-function endpoint(url: string, method: string) {
+function endpoint(url: string, method: HTTPMethod) {
     registerEndpoint(url, {
         method,
         handler: async (event) => {
@@ -54,8 +55,8 @@ describe('quote drawer content', () => {
 
     it('hides the discount line when the workshop has no discount', async () => {
         useState('quote').value = makeQuote({
-            discountPercentage: 0,
-            totals: { subtotalCents: 159000, discountCents: 0, vatCents: 33390, totalCents: 192390 }
+            discount_percentage: 0,
+            totals: { subtotal_cents: 159000, discount_cents: 0, vat_cents: 33390, total_cents: 192390 }
         })
 
         const summary = await mountSuspended(QuoteSummary)
@@ -68,7 +69,7 @@ describe('quote drawer content', () => {
         useState('quote').value = makeQuote({
             lines: [makeLine({ colour: 'white', backorder: true })],
             warnings: [
-                { code: 'backorder', message: 'Some lines are out of stock and will be backordered.', lineIds: [11] }
+                { code: 'backorder', message: 'Some lines are out of stock and will be backordered.', line_ids: [11] }
             ]
         })
 
@@ -100,7 +101,7 @@ describe('quote drawer content', () => {
     })
 
     it('changes a quantity through the API with the new quantity', async () => {
-        response = { body: { data: makeQuote({ lines: [makeLine({ quantity: 3, lineTotalCents: 238500 })] }) } }
+        response = { body: { data: makeQuote({ lines: [makeLine({ quantity: 3, line_total_cents: 238500 })] }) } }
         const summary = await mountSuspended(QuoteSummary)
 
         const quantity = summary.get('input[aria-label="Quantity of DAF XF 106 Sideskirt set"]')
@@ -112,7 +113,7 @@ describe('quote drawer content', () => {
     })
 
     it('submits the quote through the API and then shows it read-only', async () => {
-        response = { body: { data: makeQuote({ status: 'submitted', submittedAt: '2026-11-16T10:00:00+00:00' }) } }
+        response = { body: { data: makeQuote({ status: 'submitted', submitted_at: '2026-11-16T10:00:00+00:00' }) } }
         const summary = await mountSuspended(QuoteSummary)
 
         await summary.get('button:not([aria-label])').trigger('click')

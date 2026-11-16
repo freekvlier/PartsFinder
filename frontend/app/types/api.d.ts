@@ -164,7 +164,7 @@ export interface components {
     schemas: {
         /** AddQuoteLineRequest */
         AddQuoteLineRequest: {
-            partId: number;
+            part_id: number;
             quantity: number;
             colour?: string | null;
         };
@@ -187,43 +187,44 @@ export interface components {
             category: string;
             /** @enum {string} */
             condition: "new" | "used";
-            priceCents: number;
-            stockQuantity: number;
-            inStock: boolean;
+            price_cents: number;
+            stock_quantity: number;
+            in_stock: boolean;
             image: string;
             colours: string[];
+        };
+        /** QuoteLineResource */
+        QuoteLineResource: {
+            id: number;
+            part_id: number;
+            name: string;
+            oem: string;
+            image: string;
+            colour: string | null;
+            quantity: number;
+            backorder: boolean;
+            unit_price_cents: number;
+            line_total_cents: number;
         };
         /** QuoteResource */
         QuoteResource: {
             id: number;
             /** @enum {string} */
             status: "draft" | "submitted";
-            submittedAt: string | null;
-            discountPercentage: number;
-            /** @constant */
-            vatPercentage: 21;
-            lines: {
-                id: number;
-                partId: number;
-                name: string;
-                oem: string;
-                image: string;
-                colour: string | null;
-                quantity: number;
-                backorder: boolean;
-                unitPriceCents: number;
-                lineTotalCents: number;
-            }[];
+            submitted_at: string | null;
+            discount_percentage: number;
+            vat_percentage: number;
+            lines: components["schemas"]["QuoteLineResource"][];
             warnings: {
                 code: string;
                 message: string;
-                lineIds: number[];
+                line_ids: number[];
             }[];
             totals: {
-                subtotalCents: number;
-                discountCents: number;
-                vatCents: number;
-                totalCents: number;
+                subtotal_cents: number;
+                discount_cents: number;
+                vat_cents: number;
+                total_cents: number;
             };
         };
         /** UpdateQuoteLineRequest */
@@ -235,7 +236,7 @@ export interface components {
         WorkshopResource: {
             id: number;
             name: string;
-            discountPercentage: number;
+            discount_percentage: number;
         };
     };
     responses: {

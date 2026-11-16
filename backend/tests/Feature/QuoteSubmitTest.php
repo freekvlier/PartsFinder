@@ -29,10 +29,10 @@ test('submitting locks the quote and stores the status, timestamp, unit prices a
         ->assertOk()
         ->assertJsonPath('data.status', 'submitted')
         ->assertJsonPath('data.totals', [
-            'subtotalCents' => 30948,
-            'discountCents' => 3095,
-            'vatCents' => 5849,
-            'totalCents' => 33702,
+            'subtotal_cents' => 30948,
+            'discount_cents' => 3095,
+            'vat_cents' => 5849,
+            'total_cents' => 33702,
         ]);
 
     $quote = $this->quote->fresh();
@@ -50,10 +50,10 @@ test('a later price change does not change a submitted quote', function () {
     $part->update(['price_cents' => 99999]);
 
     $this->getJson("/api/quotes/{$this->quote->id}")
-        ->assertJsonPath('data.lines.0.unitPriceCents', 10000)
-        ->assertJsonPath('data.lines.0.lineTotalCents', 20000)
-        ->assertJsonPath('data.totals.subtotalCents', 20000)
-        ->assertJsonPath('data.totals.totalCents', 21780);
+        ->assertJsonPath('data.lines.0.unit_price_cents', 10000)
+        ->assertJsonPath('data.lines.0.line_total_cents', 20000)
+        ->assertJsonPath('data.totals.subtotal_cents', 20000)
+        ->assertJsonPath('data.totals.total_cents', 21780);
 });
 
 test('a later change of the workshop discount does not change a submitted quote', function () {
@@ -63,7 +63,7 @@ test('a later change of the workshop discount does not change a submitted quote'
 
     $this->workshop->update(['discount_percentage' => 50]);
 
-    $this->getJson("/api/quotes/{$this->quote->id}")->assertJsonPath('data.totals.discountCents', 1000);
+    $this->getJson("/api/quotes/{$this->quote->id}")->assertJsonPath('data.totals.discount_cents', 1000);
 });
 
 test('submitting re-checks the stock of in-stock lines and names the offending lines', function () {
@@ -122,7 +122,7 @@ test('after submission every mutation answers 409 and nothing changes', function
     $this->postJson($this->url)->assertOk();
 
     $lines = "/api/quotes/{$this->quote->id}/lines";
-    $this->postJson($lines, ['partId' => $part->id, 'quantity' => 1])->assertConflict();
+    $this->postJson($lines, ['part_id' => $part->id, 'quantity' => 1])->assertConflict();
     $this->patchJson("{$lines}/{$line->id}", ['quantity' => 5])->assertConflict();
     $this->deleteJson("{$lines}/{$line->id}")->assertConflict();
 

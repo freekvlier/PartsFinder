@@ -3,8 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Quote;
-use App\Models\QuoteLine;
-use App\Services\QuoteCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,28 +24,17 @@ class QuoteResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status->value,
-            'submittedAt' => $this->submitted_at?->toIso8601String(),
-            'discountPercentage' => $this->workshop->discount_percentage,
-            'vatPercentage' => QuoteCalculator::VAT_PERCENTAGE,
-            'lines' => $this->lines->map(fn (QuoteLine $line): array => [
-                'id' => $line->id,
-                'partId' => $line->part_id,
-                'name' => $line->part->name,
-                'oem' => $line->part->oem,
-                'image' => $line->part->image,
-                'colour' => $line->colour?->name,
-                'quantity' => $line->quantity,
-                'backorder' => $line->backorder,
-                'unitPriceCents' => $line->unit_price_cents ?? $line->part->price_cents,
-                'lineTotalCents' => ($line->unit_price_cents ?? $line->part->price_cents) * $line->quantity,
-            ])->all(),
-            /** @var list<array{code: string, message: string, lineIds: list<int>}> */
+            'submitted_at' => $this->submitted_at?->toIso8601String(),
+            'discount_percentage' => $this->discount_percentage,
+            'vat_percentage' => $this->vat_percentage,
+            'lines' => QuoteLineResource::collection($this->lines),
+            /** @var list<array{code: string, message: string, line_ids: list<int>}> */
             'warnings' => $this->warnings(),
             'totals' => [
-                'subtotalCents' => (int) $totals['subtotal'],
-                'discountCents' => (int) $totals['discount'],
-                'vatCents' => (int) $totals['vat'],
-                'totalCents' => (int) $totals['total'],
+                'subtotal_cents' => $totals['subtotal'],
+                'discount_cents' => $totals['discount'],
+                'vat_cents' => $totals['vat'],
+                'total_cents' => $totals['total'],
             ],
         ];
     }
@@ -55,7 +42,7 @@ class QuoteResource extends JsonResource
     /**
      * The warnings of the quote: one listing the lines that will be backordered, if there are any.
      *
-     * @return list<array{code: string, message: string, lineIds: list<int>}>
+     * @return list<array{code: string, message: string, line_ids: list<int>}>
      */
     private function warnings(): array
     {
@@ -68,7 +55,7 @@ class QuoteResource extends JsonResource
         return [[
             'code' => 'backorder',
             'message' => 'Some lines are out of stock and will be backordered.',
-            'lineIds' => $backorderLineIds,
+            'line_ids' => $backorderLineIds,
         ]];
     }
 }

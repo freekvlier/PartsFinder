@@ -57,4 +57,24 @@ class QuoteLine extends Model
     {
         return $this->belongsTo(Colour::class);
     }
+
+    /**
+     * The unit price of the line: the snapshot taken on submit, otherwise the current price of the part.
+     *
+     * @return int The unit price in cents.
+     */
+    public function unitPriceCents(): int
+    {
+        return $this->unit_price_cents ?? $this->part->price_cents;
+    }
+
+    /**
+     * The total of the line: the unit price times the quantity.
+     *
+     * @return int The line total in cents.
+     */
+    public function totalCents(): int
+    {
+        return $this->unitPriceCents() * $this->quantity;
+    }
 }

@@ -3,12 +3,9 @@
 use App\Condition;
 use App\Models\Brand;
 use App\Models\Part;
-use App\Models\Workshop;
 use Illuminate\Testing\TestResponse;
 
-beforeEach(function () {
-    $this->withToken(Workshop::factory()->create()->createToken('api')->plainTextToken);
-});
+beforeEach(fn () => actingAsWorkshop());
 
 /**
  * The names of the parts in the response, in the order returned.

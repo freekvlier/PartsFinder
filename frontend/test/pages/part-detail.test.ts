@@ -18,6 +18,10 @@ registerEndpoint('/api/parts/404', { handler: (event) => {
     setResponseStatus(event, 404)
     return { message: 'Not found.' }
 } })
+registerEndpoint('/api/parts/500', { handler: (event) => {
+    setResponseStatus(event, 500)
+    return { message: 'Server error.' }
+} })
 registerEndpoint('/api/quotes', { method: 'POST', handler: async (event) => {
     calls.push({ method: 'POST', url: '/api/quotes' })
     setResponseStatus(event, 201)
@@ -37,10 +41,10 @@ beforeEach(() => {
     clearNuxtData()
     calls = []
     parts = {}
-    lineResponse = { status: 201, body: { data: makeQuote({ id: 8, lines: [makeLine({ partId: 9 })] }) } }
+    lineResponse = { status: 201, body: { data: makeQuote({ id: 8, lines: [makeLine({ part_id: 9 })] }) } }
     useState('quote').value = null
     useState('quote-drawer-open').value = false
-    localStorage.clear()
+    useCookie('quote-id').value = null
 })
 
 describe('part detail page', () => {
@@ -52,8 +56,8 @@ describe('part detail page', () => {
             brand: 'Volvo',
             category: 'Lighting',
             condition: 'new',
-            priceCents: 32000,
-            stockQuantity: 5
+            price_cents: 32000,
+            stock_quantity: 5
         }))
 
         const page = await mountSuspended(PartPage, { route: '/parts/9' })
@@ -68,7 +72,7 @@ describe('part detail page', () => {
     })
 
     it('explains that a part without stock is backordered', async () => {
-        show('9', makePart({ id: 9, stockQuantity: 0, inStock: false }))
+        show('9', makePart({ id: 9, stock_quantity: 0, in_stock: false }))
 
         const page = await mountSuspended(PartPage, { route: '/parts/9' })
 
@@ -79,7 +83,14 @@ describe('part detail page', () => {
     it('shows a not found state for an unknown part', async () => {
         const page = await mountSuspended(PartPage, { route: '/parts/404' })
 
-        expect(page.find('[data-testid="part-error"]').exists()).toBe(true)
+        expect(page.get('[data-testid="part-error"]').text()).toContain('Part not found')
+    })
+
+    it('shows a loading error, not a not found state, when the API fails', async () => {
+        const page = await mountSuspended(PartPage, { route: '/parts/500' })
+
+        expect(page.get('[data-testid="part-error"]').text()).toContain('Could not load part')
+        expect(page.text()).not.toContain('Part not found')
     })
 
     it('does not ask for a colour for a part without colours', async () => {
@@ -108,7 +119,11 @@ describe('part detail page', () => {
         await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 4000 })
 
         expect(calls[0]).toMatchObject({ method: 'POST', url: '/api/quotes' })
-        expect(calls[1]).toMatchObject({ method: 'POST', url: '/api/quotes/8/lines', body: { partId: 9, quantity: 1 } })
+        expect(calls[1]).toMatchObject({
+            method: 'POST',
+            url: '/api/quotes/8/lines',
+            body: { part_id: 9, quantity: 1 }
+        })
         await vi.waitFor(() => expect(useState('quote-drawer-open').value).toBe(true), { timeout: 4000 })
     })
 
@@ -121,8 +136,9 @@ describe('part detail page', () => {
         await quantity.trigger('blur')
         await page.get('form').trigger('submit')
         await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 4000 })
+        await vi.waitFor(() => expect(useState('quote-drawer-open').value).toBe(true), { timeout: 4000 })
 
-        expect(calls[1]!.body).toMatchObject({ partId: 9, quantity: 3 })
+        expect(calls[1]!.body).toMatchObject({ part_id: 9, quantity: 3 })
     })
 
     it('shows the message of the API when the part cannot be added', async () => {

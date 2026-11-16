@@ -20,17 +20,18 @@ const sortItems = [
 ]
 
 const search = ref(q.value ?? '')
-let timer: ReturnType<typeof setTimeout> | undefined
 
 watch(q, (value) => {
     search.value = value ?? ''
 })
 
-function onSearch(value: string) {
-    search.value = value
-    clearTimeout(timer)
-    timer = setTimeout(() => change({ q: value.trim() || undefined }, { replace: true }), 300)
-}
+watchDebounced(search, (value) => {
+    const term = value.trim() || undefined
+
+    if (term !== q.value) {
+        change({ q: term }, { replace: true })
+    }
+}, { debounce: 300 })
 
 function toggleBrand(name: string) {
     change({
@@ -43,8 +44,6 @@ function toggleBrand(name: string) {
 function onSort(value: string) {
     change({ sort: value === 'name' ? undefined : value as NonNullable<PartSort> })
 }
-
-onBeforeUnmount(() => clearTimeout(timer))
 </script>
 
 <template>
@@ -53,14 +52,13 @@ onBeforeUnmount(() => clearTimeout(timer))
         data-testid="part-filters"
     >
         <UInput
-            :model-value="search"
+            v-model="search"
             icon="i-lucide-search"
             placeholder="Search by name or OEM number"
             aria-label="Search parts"
             size="lg"
             class="w-full"
             data-testid="filter-search"
-            @update:model-value="onSearch"
         />
 
         <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">

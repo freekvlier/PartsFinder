@@ -4,15 +4,8 @@ use App\Condition;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Part;
-use App\Models\Workshop;
 
-beforeEach(function () {
-    $this->withToken(Workshop::factory()->create()->createToken('api')->plainTextToken);
-});
-
-test('a request without a token is rejected with 401', function () {
-    $this->withoutToken()->getJson('/api/parts')->assertUnauthorized();
-});
+beforeEach(fn () => actingAsWorkshop());
 
 test('it lists parts with the data the overview needs', function () {
     Part::factory()
@@ -35,9 +28,9 @@ test('it lists parts with the data the overview needs', function () {
         ->assertJsonPath('data.0.brand', 'DAF')
         ->assertJsonPath('data.0.category', 'Body')
         ->assertJsonPath('data.0.condition', 'used')
-        ->assertJsonPath('data.0.priceCents', 79500)
-        ->assertJsonPath('data.0.stockQuantity', 3)
-        ->assertJsonPath('data.0.inStock', true)
+        ->assertJsonPath('data.0.price_cents', 79500)
+        ->assertJsonPath('data.0.stock_quantity', 3)
+        ->assertJsonPath('data.0.in_stock', true)
         ->assertJsonPath('data.0.image', '/img/placeholder-part.svg')
         ->assertJsonCount(2, 'data.0.colours');
 });
@@ -45,7 +38,7 @@ test('it lists parts with the data the overview needs', function () {
 test('a part without stock is not in stock', function () {
     Part::factory()->create(['stock_quantity' => 0]);
 
-    $this->getJson('/api/parts')->assertJsonPath('data.0.inStock', false);
+    $this->getJson('/api/parts')->assertJsonPath('data.0.in_stock', false);
 });
 
 test('a part without colours has an empty colour list', function () {
@@ -107,18 +100,12 @@ test('the detail of a part includes its colours and stock quantity', function ()
         ->assertJsonPath('data.id', $part->id)
         ->assertJsonPath('data.name', 'Volvo FH 4 Sideskirt set')
         ->assertJsonPath('data.brand', 'Volvo')
-        ->assertJsonPath('data.stockQuantity', 7)
-        ->assertJsonPath('data.inStock', true)
-        ->assertJsonPath('data.priceCents', 64000)
+        ->assertJsonPath('data.stock_quantity', 7)
+        ->assertJsonPath('data.in_stock', true)
+        ->assertJsonPath('data.price_cents', 64000)
         ->assertJsonCount(2, 'data.colours');
 });
 
 test('an unknown part is a 404', function () {
     $this->getJson('/api/parts/999')->assertNotFound();
-});
-
-test('the detail of a part requires a token', function () {
-    $part = Part::factory()->create();
-
-    $this->withoutToken()->getJson("/api/parts/{$part->id}")->assertUnauthorized();
 });

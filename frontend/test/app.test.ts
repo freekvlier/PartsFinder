@@ -3,6 +3,7 @@ import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { createError } from 'h3'
 import App from '~/app.vue'
 import type { WorkshopResponse } from '~/types/workshop'
+import { makeListing } from './fixtures'
 
 let response: WorkshopResponse
 let failWith: number | null
@@ -14,12 +15,12 @@ registerEndpoint('/api/me', () => {
     return response
 })
 
-registerEndpoint('/api/parts', () => ({ data: [], meta: { total: 0, current_page: 1, last_page: 1, per_page: 12 } }))
+registerEndpoint('/api/parts', () => makeListing([]))
 registerEndpoint('/api/brands', () => ({ data: [] }))
 
 beforeEach(() => {
     clearNuxtData()
-    response = { data: { id: 1, name: 'Van Dijk Trucks', discountPercentage: 10 } }
+    response = { data: { id: 1, name: 'Van Dijk Trucks', discount_percentage: 10 } }
     failWith = null
 })
 

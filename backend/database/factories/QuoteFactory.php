@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class QuoteFactory extends Factory
 {
     /**
-     * Define the default state of the model.
+     * Define the default state of the model: a draft with the rates of its workshop and the configured VAT.
      *
      * @return array<string, mixed>
      */
@@ -22,6 +22,9 @@ class QuoteFactory extends Factory
         return [
             'workshop_id' => Workshop::factory(),
             'status' => QuoteStatus::Draft,
+            'discount_percentage' => fn (array $attributes) => Workshop::find($attributes['workshop_id'])
+                ->discount_percentage,
+            'vat_percentage' => config('quotes.vat_percentage'),
         ];
     }
 }

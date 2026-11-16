@@ -6,12 +6,12 @@ useHead({ title: 'Parts' })
 const route = useRoute()
 const { partsQuery, brandsQuery, hasFilters, reset } = usePartFilters()
 
-const { data, status, error, refresh } = await useFetch<PartsResponse>('/api/parts', {
-    query: partsQuery
-})
-const { data: brandData } = await useFetch<BrandsResponse>('/api/brands', {
-    query: brandsQuery
-})
+const parts = useFetch<PartsResponse>('/api/parts', { query: partsQuery })
+const brands = useFetch<BrandsResponse>('/api/brands', { query: brandsQuery })
+await Promise.all([parts, brands])
+
+const { data, status, error, refresh } = parts
+const { data: brandData } = brands
 
 const emptyActions = computed(() => hasFilters.value
     ? [{ label: 'Reset filters', color: 'neutral' as const, variant: 'outline' as const, onClick: () => reset() }]

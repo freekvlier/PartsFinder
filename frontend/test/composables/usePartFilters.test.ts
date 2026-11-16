@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { flushPromises } from '@vue/test-utils'
 import { defineComponent } from 'vue'
 
 async function mountFilters(route: string) {
@@ -13,11 +12,6 @@ async function mountFilters(route: string) {
     }), { route })
 
     return filters
-}
-
-async function settle() {
-    await new Promise(resolve => setTimeout(resolve, 50))
-    await flushPromises()
 }
 
 describe('usePartFilters', () => {
@@ -42,9 +36,7 @@ describe('usePartFilters', () => {
         const filters = await mountFilters('/?q=brake&brand=DAF&condition=new&sort=price_asc&page=2')
 
         await filters.reset()
-        await settle()
-
-        expect(useRoute().query).toEqual({ sort: 'price_asc' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ sort: 'price_asc' }))
     })
 
     it('has no filters and page 1 on a clean URL', async () => {
@@ -59,26 +51,20 @@ describe('usePartFilters', () => {
         const filters = await mountFilters('/?q=brake&condition=used&page=3')
 
         await filters.change({ sort: 'price_asc' })
-        await settle()
-
-        expect(useRoute().query).toEqual({ q: 'brake', condition: 'used', sort: 'price_asc' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ q: 'brake', condition: 'used', sort: 'price_asc' }))
     })
 
     it('clearing a filter removes it from the URL', async () => {
         const filters = await mountFilters('/?q=brake&condition=used&brand=DAF')
 
         await filters.change({ condition: undefined, brand: [] })
-        await settle()
-
-        expect(useRoute().query).toEqual({ q: 'brake' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ q: 'brake' }))
     })
 
     it('keeps several brands as a list in the URL', async () => {
         const filters = await mountFilters('/')
 
         await filters.change({ brand: ['DAF', 'Volvo'] })
-        await settle()
-
-        expect(useRoute().query).toEqual({ brand: ['DAF', 'Volvo'] })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ brand: ['DAF', 'Volvo'] }))
     })
 })

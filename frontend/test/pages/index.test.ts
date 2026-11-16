@@ -1,44 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
-import { flushPromises } from '@vue/test-utils'
 import { createError, getQuery } from 'h3'
 import IndexPage from '~/pages/index.vue'
-import type { BrandsResponse, Part, PartsResponse } from '~/types/parts'
-
-function part(overrides: Partial<Part> = {}): Part {
-    return {
-        id: 1,
-        name: 'DAF XF 106 Sideskirt set',
-        oem: '2119711',
-        brand: 'DAF',
-        category: 'Body',
-        condition: 'used',
-        priceCents: 79500,
-        stockQuantity: 3,
-        inStock: true,
-        image: '/img/placeholder-part.svg',
-        colours: [],
-        ...overrides
-    }
-}
-
-function listing(parts: Part[], meta: Partial<PartsResponse['meta']> = {}): PartsResponse {
-    return {
-        data: parts,
-        links: { first: null, last: null, prev: null, next: null },
-        meta: {
-            current_page: 1,
-            from: 1,
-            last_page: 1,
-            links: [],
-            path: null,
-            per_page: 12,
-            to: parts.length,
-            total: parts.length,
-            ...meta
-        }
-    }
-}
+import type { BrandsResponse, PartsResponse } from '~/types/parts'
+import { makeListing, makePart } from '../fixtures'
 
 let response: PartsResponse
 let brands: BrandsResponse
@@ -63,7 +28,7 @@ registerEndpoint('/api/brands', (event) => {
 
 beforeEach(() => {
     clearNuxtData()
-    response = listing([part()])
+    response = makeListing([makePart()])
     brands = { data: [{ name: 'DAF', count: 4 }, { name: 'MAN', count: 2 }, { name: 'Volvo', count: 0 }] }
     failWith = null
     requests = []
@@ -73,16 +38,16 @@ beforeEach(() => {
 
 describe('parts overview', () => {
     it('renders a card for every part with its details', async () => {
-        response = listing([
-            part(),
-            part({
+        response = makeListing([
+            makePart(),
+            makePart({
                 id: 2,
                 name: 'Volvo FH 4 Headlamp left',
                 oem: '3141592',
                 brand: 'Volvo',
                 condition: 'new',
-                priceCents: 32000,
-                stockQuantity: 5
+                price_cents: 32000,
+                stock_quantity: 5
             })
         ])
 
@@ -101,7 +66,7 @@ describe('parts overview', () => {
     })
 
     it('shows an out of stock indicator for a part without stock', async () => {
-        response = listing([part({ stockQuantity: 0, inStock: false })])
+        response = makeListing([makePart({ stock_quantity: 0, in_stock: false })])
 
         const page = await mountSuspended(IndexPage)
 
@@ -110,7 +75,7 @@ describe('parts overview', () => {
     })
 
     it('shows the total number of parts', async () => {
-        response = listing([part()], { total: 54 })
+        response = makeListing([makePart()], { total: 54 })
 
         const page = await mountSuspended(IndexPage)
 
@@ -118,7 +83,7 @@ describe('parts overview', () => {
     })
 
     it('shows an empty state when there are no parts', async () => {
-        response = listing([])
+        response = makeListing([])
 
         const page = await mountSuspended(IndexPage)
 
@@ -156,7 +121,7 @@ describe('parts overview URL state', () => {
     })
 
     it('links the pagination to the other pages through the URL', async () => {
-        response = listing([part()], { current_page: 1, last_page: 3, total: 30 })
+        response = makeListing([makePart()], { current_page: 1, last_page: 3, total: 30 })
 
         const page = await mountSuspended(IndexPage, { route: '/' })
         const hrefs = page.findAll('a').map(link => link.attributes('href'))
@@ -165,18 +130,13 @@ describe('parts overview URL state', () => {
     })
 
     it('does not show pagination when everything fits on one page', async () => {
-        response = listing([part()], { last_page: 1 })
+        response = makeListing([makePart()], { last_page: 1 })
 
         const page = await mountSuspended(IndexPage, { route: '/' })
 
         expect(page.findAll('a').some(link => link.attributes('href')?.includes('page='))).toBe(false)
     })
 })
-
-async function settle() {
-    await new Promise(resolve => setTimeout(resolve, 100))
-    await flushPromises()
-}
 
 describe('parts overview search, filters and sort', () => {
     it('passes the search, brands, condition, sort and page from the URL to the API', async () => {
@@ -229,18 +189,14 @@ describe('parts overview search, filters and sort', () => {
         const page = await mountSuspended(IndexPage, { route: '/?q=brake&brand=MAN&page=2' })
 
         await page.get('[data-brand="DAF"]').trigger('click')
-        await settle()
-
-        expect(useRoute().query).toEqual({ q: 'brake', brand: ['MAN', 'DAF'] })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ q: 'brake', brand: ['MAN', 'DAF'] }))
     })
 
     it('selecting a selected brand pill again removes it', async () => {
         const page = await mountSuspended(IndexPage, { route: '/?brand=MAN&brand=DAF' })
 
         await page.get('[data-brand="MAN"]').trigger('click')
-        await settle()
-
-        expect(useRoute().query).toEqual({ brand: ['DAF'] })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ brand: ['DAF'] }))
     })
 
     it('the condition control marks the active condition and changes it through the URL', async () => {
@@ -250,16 +206,14 @@ describe('parts overview search, filters and sort', () => {
         expect(pressed().map(button => button.text())).toEqual(['Used'])
 
         await page.get('[data-condition="new"]').trigger('click')
-        await settle()
-        expect(useRoute().query).toEqual({ condition: 'new' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ condition: 'new' }))
 
         await page.get('[data-condition="all"]').trigger('click')
-        await settle()
-        expect(useRoute().query).toEqual({})
+        await vi.waitFor(() => expect(useRoute().query).toEqual({}))
     })
 
     it('shows the total next to the filters', async () => {
-        response = listing([part()], { total: 54 })
+        response = makeListing([makePart()], { total: 54 })
 
         const page = await mountSuspended(IndexPage, { route: '/' })
 
@@ -276,11 +230,9 @@ describe('parts overview search, filters and sort', () => {
         const page = await mountSuspended(IndexPage, { route: '/?page=3' })
 
         await page.get('[data-testid="filter-search"]').setValue('brake')
-        await new Promise(resolve => setTimeout(resolve, 400))
-        await flushPromises()
 
-        expect(useRoute().query).toEqual({ q: 'brake' })
-        expect(requests.at(-1)).toMatchObject({ q: 'brake', page: '1' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ q: 'brake' }))
+        await vi.waitFor(() => expect(requests.at(-1)).toMatchObject({ q: 'brake', page: '1' }))
     })
 
     it('shows the reset button only when something is filtered, not for a sort alone', async () => {
@@ -298,13 +250,11 @@ describe('parts overview search, filters and sort', () => {
         })
 
         await page.get('[data-testid="filter-reset"]').trigger('click')
-        await settle()
-
-        expect(useRoute().query).toEqual({ sort: 'price_desc' })
+        await vi.waitFor(() => expect(useRoute().query).toEqual({ sort: 'price_desc' }))
     })
 
     it('explains an empty result when filters are active, and offers to reset them', async () => {
-        response = listing([])
+        response = makeListing([])
 
         const page = await mountSuspended(IndexPage, { route: '/?q=nothing' })
 

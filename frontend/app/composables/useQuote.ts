@@ -1,30 +1,5 @@
 import type { Quote, QuoteResponse } from '~/types/quotes'
 
-const storageKey = 'partsfinder.quote-id'
-
-function readStoredId(): string | null {
-    try {
-        return localStorage.getItem(storageKey)
-    } catch {
-        return null
-    }
-}
-
-/**
- * Remember the quote id across refreshes. Skipped when storage is unavailable.
- */
-function storeId(id: number | null) {
-    try {
-        if (id === null) {
-            localStorage.removeItem(storageKey)
-        } else {
-            localStorage.setItem(storageKey, String(id))
-        }
-    } catch {
-        return
-    }
-}
-
 /**
  * The workshop's open quote: shared state, its actions, and restoring it after a refresh.
  */
@@ -32,13 +7,14 @@ export function useQuote() {
     const quote = useState<Quote | null>('quote', () => null)
     const isOpen = useState('quote-drawer-open', () => false)
     const pending = useState('quote-pending', () => false)
+    const storedId = useCookie<number | null>('quote-id', { maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' })
 
     async function send(path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: Record<string, unknown>) {
         pending.value = true
         try {
             const response = await $fetch<QuoteResponse>(path, { method, body })
             quote.value = response.data
-            storeId(response.data.id)
+            storedId.value = response.data.id
 
             return response.data
         } finally {
@@ -46,17 +22,18 @@ export function useQuote() {
         }
     }
 
+    /**
+     * Load the quote the cookie remembers, on the server or the client; an id the API no longer knows is forgotten.
+     */
     async function restore() {
-        const id = readStoredId()
-
-        if (!id) {
+        if (quote.value || !storedId.value) {
             return
         }
 
         try {
-            await send(`/api/quotes/${id}`, 'GET')
+            await send(`/api/quotes/${storedId.value}`, 'GET')
         } catch {
-            storeId(null)
+            storedId.value = null
             quote.value = null
         }
     }
@@ -70,7 +47,7 @@ export function useQuote() {
             await startNew()
         }
 
-        return await send(`/api/quotes/${quote.value!.id}/lines`, 'POST', { partId, quantity, colour })
+        return await send(`/api/quotes/${quote.value!.id}/lines`, 'POST', { part_id: partId, quantity, colour })
     }
 
     async function changeQuantity(lineId: number, quantity: number) {

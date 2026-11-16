@@ -4,29 +4,25 @@ import type { PartResponse } from '~/types/parts'
 const route = useRoute()
 const { data, error } = await useFetch<PartResponse>(() => `/api/parts/${route.params.id}`)
 const part = computed(() => data.value?.data)
+const notFound = computed(() => error.value?.statusCode === 404)
 
 if (import.meta.server && error.value) {
-    setResponseStatus(useRequestEvent()!, 404)
+    setResponseStatus(useRequestEvent()!, error.value.statusCode ?? 500)
 }
 
 useHead({ title: () => part.value?.name ?? 'Part' })
 
 const { addLine, isOpen, pending } = useQuote()
+const { errors, run } = useApiAction()
 
 const quantity = ref(1)
 const colour = ref<string>()
-const errors = ref<string[]>([])
 
 const needsColour = computed(() => (part.value?.colours.length ?? 0) > 0)
 
 async function addToQuote() {
-    errors.value = []
-
-    try {
-        await addLine(part.value!.id, quantity.value, colour.value)
+    if (await run(() => addLine(part.value!.id, quantity.value, colour.value))) {
         isOpen.value = true
-    } catch (failure) {
-        errors.value = apiErrorMessages(failure)
     }
 }
 </script>
@@ -47,8 +43,8 @@ async function addToQuote() {
             color="error"
             variant="subtle"
             icon="i-lucide-triangle-alert"
-            title="Part not found"
-            description="This part does not exist or could not be loaded."
+            :title="notFound ? 'Part not found' : 'Could not load part'"
+            :description="notFound ? 'This part does not exist.' : 'Something went wrong while loading the part.'"
             data-testid="part-error"
         />
 
@@ -74,11 +70,7 @@ async function addToQuote() {
                         color="neutral"
                         variant="outline"
                     />
-                    <UBadge
-                        :label="part.condition === 'new' ? 'New' : 'Used'"
-                        :color="part.condition === 'new' ? 'primary' : 'warning'"
-                        variant="subtle"
-                    />
+                    <PartConditionBadge :condition="part.condition" />
                 </div>
 
                 <h1 class="text-2xl font-semibold">
@@ -90,22 +82,20 @@ async function addToQuote() {
 
                 <div>
                     <p class="text-3xl font-semibold">
-                        {{ formatPrice(part.priceCents) }}
+                        {{ formatPrice(part.price_cents) }}
                     </p>
                     <p class="text-sm text-muted">
                         excl. VAT
                     </p>
                 </div>
 
-                <UBadge
-                    :label="part.inStock ? `In stock (${part.stockQuantity})` : 'Out of stock'"
-                    :color="part.inStock ? 'success' : 'error'"
-                    variant="subtle"
+                <PartStockBadge
+                    :part="part"
                     class="self-start"
                     data-testid="part-stock"
                 />
                 <p
-                    v-if="!part.inStock"
+                    v-if="!part.in_stock"
                     class="text-sm text-muted"
                 >
                     This part can still be added to a quote and will be backordered.

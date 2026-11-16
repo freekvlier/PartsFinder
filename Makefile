@@ -2,7 +2,7 @@ SAIL := cd backend && ./vendor/bin/sail
 
 .DEFAULT_GOAL := up
 
-.PHONY: setup up down seed types format lint test test-backend test-frontend
+.PHONY: setup up attach down seed types format lint test test-backend test-frontend
 
 setup:
 	cd backend && cp --update=none .env.example .env
@@ -11,7 +11,10 @@ setup:
 	cd frontend && pnpm install
 
 up:
-	docker compose up
+	docker compose up -d
+
+attach:
+	docker compose logs --follow
 
 down:
 	docker compose down

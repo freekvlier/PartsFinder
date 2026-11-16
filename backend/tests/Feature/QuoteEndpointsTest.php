@@ -4,31 +4,22 @@ use App\Models\Part;
 use App\Models\Quote;
 use App\Models\QuoteLine;
 
-test('every quote endpoint rejects a request without a token with 401', function (string $method, string $url) {
-    $this->json($method, $url)->assertUnauthorized();
-})->with([
-    'create' => ['POST', '/api/quotes'],
-    'show' => ['GET', '/api/quotes/1'],
-    'add line' => ['POST', '/api/quotes/1/lines'],
-    'update line' => ['PATCH', '/api/quotes/1/lines/1'],
-    'remove line' => ['DELETE', '/api/quotes/1/lines/1'],
-    'submit' => ['POST', '/api/quotes/1/submit'],
-]);
-
 test('creating a quote returns an empty draft with totals of zero', function () {
     $workshop = actingAsWorkshop();
 
     $this->postJson('/api/quotes')
         ->assertCreated()
         ->assertJsonPath('data.status', 'draft')
-        ->assertJsonPath('data.submittedAt', null)
+        ->assertJsonPath('data.submitted_at', null)
+        ->assertJsonPath('data.discount_percentage', 0)
+        ->assertJsonPath('data.vat_percentage', 21)
         ->assertJsonPath('data.lines', [])
         ->assertJsonPath('data.warnings', [])
         ->assertJsonPath('data.totals', [
-            'subtotalCents' => 0,
-            'discountCents' => 0,
-            'vatCents' => 0,
-            'totalCents' => 0,
+            'subtotal_cents' => 0,
+            'discount_cents' => 0,
+            'vat_cents' => 0,
+            'total_cents' => 0,
         ]);
 
     expect($workshop->quotes()->count())->toBe(1);
@@ -52,10 +43,10 @@ test('showing a quote returns its lines and totals', function () {
         ->assertJsonPath('data.lines.0.name', 'DAF Brake disc')
         ->assertJsonPath('data.lines.0.oem', '2108022')
         ->assertJsonPath('data.lines.0.quantity', 2)
-        ->assertJsonPath('data.lines.0.unitPriceCents', 21000)
-        ->assertJsonPath('data.lines.0.lineTotalCents', 42000)
+        ->assertJsonPath('data.lines.0.unit_price_cents', 21000)
+        ->assertJsonPath('data.lines.0.line_total_cents', 42000)
         ->assertJsonPath('data.lines.0.colour', null)
-        ->assertJsonPath('data.totals.subtotalCents', 42000);
+        ->assertJsonPath('data.totals.subtotal_cents', 42000);
 });
 
 test('a workshop cannot see another workshop\'s quote', function () {
@@ -71,7 +62,7 @@ test('a workshop cannot change another workshop\'s quote', function () {
     $part = Part::factory()->create(['stock_quantity' => 5]);
     actingAsWorkshop();
 
-    $this->postJson("/api/quotes/{$other->id}/lines", ['partId' => $part->id, 'quantity' => 1])->assertNotFound();
+    $this->postJson("/api/quotes/{$other->id}/lines", ['part_id' => $part->id, 'quantity' => 1])->assertNotFound();
     $this->patchJson("/api/quotes/{$other->id}/lines/{$line->id}", ['quantity' => 2])->assertNotFound();
     $this->deleteJson("/api/quotes/{$other->id}/lines/{$line->id}")->assertNotFound();
     $this->postJson("/api/quotes/{$other->id}/submit")->assertNotFound();

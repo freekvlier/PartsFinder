@@ -30,7 +30,7 @@ class QuoteLineController extends Controller
      */
     public function store(AddQuoteLineRequest $request, Quote $quote): JsonResponse
     {
-        $part = Part::with('colours')->findOrFail($request->integer('partId'));
+        $part = Part::with('colours')->findOrFail($request->integer('part_id'));
 
         $quote = $this->quoteService->addLine($quote, $part, $request->integer('quantity'), $request->input('colour'));
 
@@ -49,13 +49,7 @@ class QuoteLineController extends Controller
     {
         $line->load('part.colours', 'colour');
 
-        return $this->quoteService->updateLine(
-            $quote,
-            $line,
-            $request->has('quantity') ? $request->integer('quantity') : null,
-            $request->has('colour'),
-            $request->input('colour'),
-        )->toResource();
+        return $this->quoteService->updateLine($quote, $line, $request->validated())->toResource();
     }
 
     /**
