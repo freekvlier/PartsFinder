@@ -10,9 +10,11 @@ test('a valid bearer token authenticates the workshop', function () {
     $this->withToken($workshop->createToken('api')->plainTextToken)
         ->getJson('/api/me')
         ->assertOk()
-        ->assertJsonPath('id', $workshop->id)
-        ->assertJsonPath('name', 'Acme')
-        ->assertJsonPath('discount_percentage', 10);
+        ->assertExactJson(['data' => [
+            'id' => $workshop->id,
+            'name' => 'Acme',
+            'discountPercentage' => 10,
+        ]]);
 });
 
 test('a request without a token is rejected with 401', function () {
@@ -30,10 +32,10 @@ test('an unknown token is rejected with 401', function () {
 test('the workshop seeder creates a workshop without and one with 10% discount, with fixed tokens', function () {
     $this->seed(WorkshopSeeder::class);
 
-    $this->withToken('local-token-standard')->getJson('/api/me')->assertOk()->assertJsonPath('discount_percentage', 0);
+    $this->withToken('local-token-standard')->getJson('/api/me')->assertOk()->assertJsonPath('data.discountPercentage', 0);
 
     auth()->forgetGuards(); // one app instance serves both requests in a test; production does not
-    $this->withToken('local-token-discount')->getJson('/api/me')->assertOk()->assertJsonPath('discount_percentage', 10);
+    $this->withToken('local-token-discount')->getJson('/api/me')->assertOk()->assertJsonPath('data.discountPercentage', 10);
 });
 
 test('the database seeder creates the fixed-token workshops in the local environment only', function () {

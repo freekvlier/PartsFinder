@@ -24,11 +24,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "`Workshop`",
+                        "description": "`WorkshopResource`",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Workshop"
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WorkshopResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
                                 }
                             }
                         }
@@ -39,14 +47,130 @@
                 }
             }
         },
+        "/brands": {
+            "get": {
+                "operationId": "brand.index",
+                "summary": "List every brand with the number of parts that match the active search and condition.\nThe brand filter itself is not applied, so a brand's count stays visible while it is selected",
+                "tags": [
+                    "Brand"
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
+                    },
+                    {
+                        "name": "condition",
+                        "in": "query",
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/Condition"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of `BrandResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/BrandResource"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthenticationException"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                }
+            }
+        },
         "/parts": {
             "get": {
                 "operationId": "part.index",
-                "summary": "List the parts, paginated",
+                "summary": "List the parts that match the search, brand and condition filters, sorted and paginated",
                 "tags": [
                     "Part"
                 ],
                 "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "maxLength": 100
+                        }
+                    },
+                    {
+                        "name": "brand[]",
+                        "in": "query",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "maxLength": 100
+                            }
+                        }
+                    },
+                    {
+                        "name": "condition",
+                        "in": "query",
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "$ref": "#/components/schemas/Condition"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "enum": [
+                                "price_asc",
+                                "price_desc",
+                                null
+                            ]
+                        }
+                    },
                     {
                         "name": "page",
                         "in": "query",
@@ -613,6 +737,30 @@
                 ],
                 "title": "AddQuoteLineRequest"
             },
+            "BrandResource": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "count": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "name",
+                    "count"
+                ],
+                "title": "BrandResource"
+            },
+            "Condition": {
+                "type": "string",
+                "enum": [
+                    "new",
+                    "used"
+                ],
+                "title": "Condition"
+            },
             "PartResource": {
                 "type": "object",
                 "properties": {
@@ -828,7 +976,7 @@
                 },
                 "title": "UpdateQuoteLineRequest"
             },
-            "Workshop": {
+            "WorkshopResource": {
                 "type": "object",
                 "properties": {
                     "id": {
@@ -837,32 +985,16 @@
                     "name": {
                         "type": "string"
                     },
-                    "discount_percentage": {
+                    "discountPercentage": {
                         "type": "number"
-                    },
-                    "created_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date-time"
                     }
                 },
                 "required": [
                     "id",
                     "name",
-                    "discount_percentage",
-                    "created_at",
-                    "updated_at"
+                    "discountPercentage"
                 ],
-                "title": "Workshop"
+                "title": "WorkshopResource"
             }
         },
         "responses": {

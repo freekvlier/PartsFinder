@@ -18,7 +18,7 @@ test('the printed token authenticates the new workshop', function () {
 
     preg_match('/(\d+\|\w+)/', $output->fetch(), $matches);
 
-    $this->withToken($matches[1])->getJson('/api/me')->assertOk()->assertJsonPath('name', 'Acme Trucks');
+    $this->withToken($matches[1])->getJson('/api/me')->assertOk()->assertJsonPath('data.name', 'Acme Trucks');
 });
 
 test('the discount defaults to 0', function () {

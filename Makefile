@@ -2,7 +2,7 @@ SAIL := cd backend && ./vendor/bin/sail
 
 .DEFAULT_GOAL := up
 
-.PHONY: setup up down seed test test-backend test-frontend
+.PHONY: setup up down seed types test test-backend test-frontend
 
 setup:
 	cd backend && cp --update=none .env.example .env
@@ -19,6 +19,10 @@ down:
 seed:
 	@grep -q '^APP_KEY=.\+' backend/.env || ( $(SAIL) artisan key:generate )
 	$(SAIL) artisan migrate:fresh --seed
+
+types:
+	$(SAIL) artisan scramble:export
+	cd frontend && pnpm generate:api-types
 
 test: test-backend test-frontend
 

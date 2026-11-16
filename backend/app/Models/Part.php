@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Condition;
 use Database\Factories\PartFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +61,74 @@ class Part extends Model
     public function colours(): BelongsToMany
     {
         return $this->belongsToMany(Colour::class);
+    }
+
+    /**
+     * Parts whose name or OEM number contains the search term. A blank term matches everything.
+     *
+     * @param  Builder<Part>  $query  The parts query.
+     * @param  string|null  $term  The text to look for.
+     */
+    #[Scope]
+    protected function search(Builder $query, ?string $term): void
+    {
+        $term = trim((string) $term);
+
+        if ($term === '') {
+            return;
+        }
+
+        // "!" is the escape character because a backslash only escapes in MySQL, not in SQLite.
+        $like = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $term).'%';
+
+        $query->where(fn (Builder $query) => $query
+            ->whereRaw("name like ? escape '!'", [$like])
+            ->orWhereRaw("oem like ? escape '!'", [$like]));
+    }
+
+    /**
+     * Parts in the given condition. No condition matches everything.
+     *
+     * @param  Builder<Part>  $query  The parts query.
+     * @param  Condition|null  $condition  The condition to keep.
+     */
+    #[Scope]
+    protected function inCondition(Builder $query, ?Condition $condition): void
+    {
+        $query->when($condition, fn (Builder $query) => $query->where('condition', $condition));
+    }
+
+    /**
+     * Parts of any of the given brands. No brands matches everything.
+     *
+     * @param  Builder<Part>  $query  The parts query.
+     * @param  list<string>  $brandNames  The brand names to keep.
+     */
+    #[Scope]
+    protected function ofBrands(Builder $query, array $brandNames): void
+    {
+        $query->when($brandNames !== [], fn (Builder $query) => $query->whereIn(
+            'brand_id',
+            Brand::query()->whereIn('name', $brandNames)->select('id'),
+        ));
+    }
+
+    /**
+     * Order the parts by price when asked, otherwise by name. Name and id break ties so pages stay stable.
+     *
+     * @param  Builder<Part>  $query  The parts query.
+     * @param  string|null  $sort  `price_asc` or `price_desc`.
+     */
+    #[Scope]
+    protected function sortedBy(Builder $query, ?string $sort): void
+    {
+        match ($sort) {
+            'price_asc' => $query->orderBy('price_cents'),
+            'price_desc' => $query->orderByDesc('price_cents'),
+            default => null,
+        };
+
+        $query->orderBy('name')->orderBy('id');
     }
 
     /**

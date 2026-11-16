@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\QuoteLineController;
@@ -10,6 +11,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::get('/parts', [PartController::class, 'index']);
     Route::get('/parts/{part}', [PartController::class, 'show']);
+    Route::get('/brands', [BrandController::class, 'index']);
 
     Route::post('/quotes', [QuoteController::class, 'store']);
 

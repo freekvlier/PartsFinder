@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Condition;
 use App\Http\Requests\IndexPartsRequest;
 use App\Http\Resources\PartResource;
 use App\Models\Part;
@@ -10,17 +11,21 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class PartController extends Controller
 {
     /**
-     * List the parts, paginated.
+     * List the parts that match the search, brand and condition filters, sorted and paginated.
      *
      * @param  IndexPartsRequest  $request  The validated query parameters.
      * @return AnonymousResourceCollection The requested page of parts.
      */
     public function index(IndexPartsRequest $request): AnonymousResourceCollection
     {
-        $parts = Part::with(['brand', 'category', 'colours'])
-            ->orderBy('name')
-            ->orderBy('id')
-            ->paginate($request->integer('per_page', 12));
+        $query = Part::with(['brand', 'category', 'colours']);
+
+        $query->search($request->input('q'))
+            ->ofBrands($request->array('brand'))
+            ->inCondition($request->enum('condition', Condition::class))
+            ->sortedBy($request->input('sort'));
+
+        $parts = $query->paginate($request->integer('per_page', 12));
 
         return PartResource::collection($parts);
     }

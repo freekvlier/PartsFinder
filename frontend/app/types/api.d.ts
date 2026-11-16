@@ -21,6 +21,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/brands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List every brand with the number of parts that match the active search and condition.
+         *     The brand filter itself is not applied, so a brand's count stays visible while it is selected
+         */
+        get: operations["brand.index"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/parts": {
         parameters: {
             query?: never;
@@ -28,7 +48,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List the parts, paginated */
+        /** List the parts that match the search, brand and condition filters, sorted and paginated */
         get: operations["part.index"];
         put?: never;
         post?: never;
@@ -151,6 +171,16 @@ export interface components {
             quantity: number;
             colour?: string | null;
         };
+        /** BrandResource */
+        BrandResource: {
+            name: string;
+            count: number;
+        };
+        /**
+         * Condition
+         * @enum {string}
+         */
+        Condition: "new" | "used";
         /** PartResource */
         PartResource: {
             id: number;
@@ -204,15 +234,11 @@ export interface components {
             quantity?: number;
             colour?: string | null;
         };
-        /** Workshop */
-        Workshop: {
+        /** WorkshopResource */
+        WorkshopResource: {
             id: number;
             name: string;
-            discount_percentage: number;
-            /** Format: date-time */
-            created_at: string | null;
-            /** Format: date-time */
-            updated_at: string | null;
+            discountPercentage: number;
         };
     };
     responses: {
@@ -285,21 +311,54 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description `Workshop` */
+            /** @description `WorkshopResource` */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Workshop"];
+                    "application/json": {
+                        data: components["schemas"]["WorkshopResource"];
+                    };
                 };
             };
             401: components["responses"]["AuthenticationException"];
         };
     };
+    "brand.index": {
+        parameters: {
+            query?: {
+                q?: string | null;
+                condition?: components["schemas"]["Condition"] | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of `BrandResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["BrandResource"][];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
     "part.index": {
         parameters: {
             query?: {
+                q?: string | null;
+                "brand[]"?: string[];
+                condition?: components["schemas"]["Condition"] | null;
+                sort?: "price_asc" | "price_desc" | null;
                 page?: number;
                 per_page?: number;
             };

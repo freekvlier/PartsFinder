@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
+import { flushPromises } from '@vue/test-utils'
 import { createError, getQuery } from 'h3'
 import IndexPage from '~/pages/index.vue'
-import type { Part, PartsResponse } from '~/types/parts'
+import type { BrandsResponse, Part, PartsResponse } from '~/types/parts'
 
 function part(overrides: Partial<Part> = {}): Part {
   return {
@@ -40,22 +41,34 @@ function listing(parts: Part[], meta: Partial<PartsResponse['meta']> = {}): Part
 }
 
 let response: PartsResponse
+let brands: BrandsResponse
 let failWith: number | null
 let requests: Record<string, unknown>[]
+let requestUrls: string[]
+let brandRequests: Record<string, unknown>[]
 
 registerEndpoint('/api/parts', (event) => {
   requests.push(getQuery(event))
+  requestUrls.push(decodeURIComponent(event.path))
   if (failWith) {
     throw createError({ statusCode: failWith })
   }
   return response
 })
 
+registerEndpoint('/api/brands', (event) => {
+  brandRequests.push(getQuery(event))
+  return brands
+})
+
 beforeEach(() => {
   clearNuxtData()
   response = listing([part()])
+  brands = { data: [{ name: 'DAF', count: 4 }, { name: 'MAN', count: 2 }, { name: 'Volvo', count: 0 }] }
   failWith = null
   requests = []
+  requestUrls = []
+  brandRequests = []
 })
 
 describe('parts overview', () => {
@@ -157,5 +170,142 @@ describe('parts overview URL state', () => {
     const page = await mountSuspended(IndexPage, { route: '/' })
 
     expect(page.findAll('a').some(link => link.attributes('href')?.includes('page='))).toBe(false)
+  })
+})
+
+async function settle() {
+  await new Promise(resolve => setTimeout(resolve, 100))
+  await flushPromises()
+}
+
+describe('parts overview search, filters and sort', () => {
+  it('passes the search, brands, condition, sort and page from the URL to the API', async () => {
+    await mountSuspended(IndexPage, {
+      route: '/?q=brake&brand=DAF&brand=MAN&condition=used&sort=price_asc&page=2'
+    })
+
+    expect(requests.at(-1)).toMatchObject({
+      'q': 'brake',
+      'brand[]': ['DAF', 'MAN'],
+      'condition': 'used',
+      'sort': 'price_asc',
+      'page': '2'
+    })
+  })
+
+  it('sends a single brand as a list too', async () => {
+    await mountSuspended(IndexPage, { route: '/?brand=DAF' })
+
+    expect(requestUrls.at(-1)).toContain('brand[]=DAF')
+  })
+
+  it('sends nothing for filters that are not in the URL', async () => {
+    await mountSuspended(IndexPage, { route: '/' })
+
+    expect(Object.keys(requests.at(-1)!)).toEqual(['page'])
+  })
+
+  it('ignores an unknown condition or sort in the URL', async () => {
+    await mountSuspended(IndexPage, { route: '/?condition=broken&sort=name_desc' })
+
+    expect(Object.keys(requests.at(-1)!)).toEqual(['page'])
+  })
+
+  it('asks for the brand counts with the search and condition, but not the brand or the page', async () => {
+    await mountSuspended(IndexPage, { route: '/?q=brake&brand=DAF&condition=new&sort=price_desc&page=3' })
+
+    expect(brandRequests.at(-1)).toEqual({ q: 'brake', condition: 'new' })
+  })
+
+  it('shows a pill per brand with its count, and marks the selected brands', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?brand=MAN' })
+    const pills = page.findAll('[data-testid="filter-brand"]')
+
+    expect(pills.map(pill => pill.text())).toEqual(['DAF 4', 'MAN 2', 'Volvo 0'])
+    expect(pills.map(pill => pill.attributes('aria-pressed'))).toEqual(['false', 'true', 'false'])
+  })
+
+  it('selecting a brand pill adds it to the URL and keeps the other filters', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?q=brake&brand=MAN&page=2' })
+
+    await page.get('[data-brand="DAF"]').trigger('click')
+    await settle()
+
+    expect(useRoute().query).toEqual({ q: 'brake', brand: ['MAN', 'DAF'] })
+  })
+
+  it('selecting a selected brand pill again removes it', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?brand=MAN&brand=DAF' })
+
+    await page.get('[data-brand="MAN"]').trigger('click')
+    await settle()
+
+    expect(useRoute().query).toEqual({ brand: ['DAF'] })
+  })
+
+  it('the condition control marks the active condition and changes it through the URL', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?condition=used&page=2' })
+    const pressed = () => page.findAll('[data-condition]').filter(b => b.attributes('aria-pressed') === 'true')
+
+    expect(pressed().map(button => button.text())).toEqual(['Used'])
+
+    await page.get('[data-condition="new"]').trigger('click')
+    await settle()
+    expect(useRoute().query).toEqual({ condition: 'new' })
+
+    await page.get('[data-condition="all"]').trigger('click')
+    await settle()
+    expect(useRoute().query).toEqual({})
+  })
+
+  it('shows the total next to the filters', async () => {
+    response = listing([part()], { total: 54 })
+
+    const page = await mountSuspended(IndexPage, { route: '/' })
+
+    expect(page.get('[data-testid="filter-total"]').text()).toBe('54 parts')
+  })
+
+  it('fills the search box from the URL', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?q=brake' })
+
+    expect(page.get<HTMLInputElement>('[data-testid="filter-search"]').element.value).toBe('brake')
+  })
+
+  it('puts a typed search in the URL after a pause and goes back to page 1', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?page=3' })
+
+    await page.get('[data-testid="filter-search"]').setValue('brake')
+    await new Promise(resolve => setTimeout(resolve, 400))
+    await flushPromises()
+
+    expect(useRoute().query).toEqual({ q: 'brake' })
+    expect(requests.at(-1)).toMatchObject({ q: 'brake', page: '1' })
+  })
+
+  it('shows the reset button only when something is filtered, not for a sort alone', async () => {
+    expect((await mountSuspended(IndexPage, { route: '/' })).find('[data-testid="filter-reset"]').exists()).toBe(false)
+    expect((await mountSuspended(IndexPage, { route: '/?sort=price_asc' }))
+      .find('[data-testid="filter-reset"]').exists()).toBe(false)
+    expect((await mountSuspended(IndexPage, { route: '/?brand=DAF' }))
+      .find('[data-testid="filter-reset"]').exists()).toBe(true)
+  })
+
+  it('reset clears the search and filters but keeps the sort', async () => {
+    const page = await mountSuspended(IndexPage, { route: '/?q=brake&brand=DAF&condition=used&sort=price_desc&page=2' })
+
+    await page.get('[data-testid="filter-reset"]').trigger('click')
+    await settle()
+
+    expect(useRoute().query).toEqual({ sort: 'price_desc' })
+  })
+
+  it('explains an empty result when filters are active, and offers to reset them', async () => {
+    response = listing([])
+
+    const page = await mountSuspended(IndexPage, { route: '/?q=nothing' })
+
+    expect(page.get('[data-testid="parts-empty"]').text()).toContain('No parts match your search and filters.')
+    expect(page.text()).toContain('Reset filters')
   })
 })

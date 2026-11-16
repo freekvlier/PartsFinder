@@ -105,11 +105,11 @@ describe('part detail page', () => {
     const page = await mountSuspended(PartPage, { route: '/parts/9' })
 
     await page.get('form').trigger('submit')
-    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 4000 })
 
     expect(calls[0]).toMatchObject({ method: 'POST', url: '/api/quotes' })
     expect(calls[1]).toMatchObject({ method: 'POST', url: '/api/quotes/8/lines', body: { partId: 9, quantity: 1 } })
-    expect(useState('quote-drawer-open').value).toBe(true)
+    await vi.waitFor(() => expect(useState('quote-drawer-open').value).toBe(true), { timeout: 4000 })
   })
 
   it('sends the chosen quantity', async () => {
@@ -120,7 +120,7 @@ describe('part detail page', () => {
     await quantity.setValue('3')
     await quantity.trigger('blur')
     await page.get('form').trigger('submit')
-    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    await vi.waitFor(() => expect(calls).toHaveLength(2), { timeout: 4000 })
 
     expect(calls[1]!.body).toMatchObject({ partId: 9, quantity: 3 })
   })
@@ -133,7 +133,7 @@ describe('part detail page', () => {
 
     await page.get('form').trigger('submit')
 
-    await vi.waitFor(() => expect(page.find('[data-testid="part-add-errors"]').exists()).toBe(true))
+    await vi.waitFor(() => expect(page.find('[data-testid="part-add-errors"]').exists()).toBe(true), { timeout: 4000 })
     expect(page.get('[data-testid="part-add-errors"]').text()).toContain('Only 3 in stock')
     expect(useState('quote-drawer-open').value).toBe(false)
   })

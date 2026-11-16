@@ -68,3 +68,22 @@
 - The calculator uses integer cents and rounds half up at every step, so results are exact and repeatable.
 
 **Trade-offs.** The server must process every change. The frontend cannot show a new total or reject an over-stock quantity on its own, so each add, update or remove waits for a response before the quote drawer updates.
+
+## 6. The frontend's API types are generated from the backend
+
+**Chosen.** Scramble reads the Laravel routes, form requests, resources and docblocks and exports `backend/openapi.json`. `openapi-typescript` turns that into `frontend/app/types/api.d.ts`. `make types` runs both steps, and both generated files are committed. The frontend types (`Part`, `Quote`, `PartsResponse` and so on) are aliases of the generated ones.
+
+**Rejected.**
+- Writing the TypeScript interfaces by hand in the frontend.
+- Validating responses at runtime with a schema library such as zod.
+
+**Why.**
+- The backend is the single source of truth for the API shape. A field renamed or removed there turns into a type error in the frontend after `make types`, instead of a blank value in the browser.
+- Request parameters are typed too, for example `brand[]`, `sort: 'price_asc' | 'price_desc'` and the `Condition` enum, so the URL state of the overview can only produce values the API accepts.
+- No second description of every endpoint to keep in sync. The same document is the API documentation.
+- It fits the rule that the frontend does not compute anything: it renders what the generated types say the API returns.
+
+**Trade-offs.**
+- It only works when `make types` is run after an API change; a forgotten run leaves stale types. The generated files are committed so a diff shows the contract change.
+- Scramble infers the shapes from the code, so some code needs help. Chaining query scopes hid the paginator and dropped `meta` from the spec until the query stayed typed, and a literal such as the VAT rate shows up as the type `21`.
+- The types are checked at compile time only. If the backend sends something its own docs do not describe, nothing fails in the browser.

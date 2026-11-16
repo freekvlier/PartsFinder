@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import type { PartsResponse } from '~/types/parts'
+import type { BrandsResponse, PartsResponse } from '~/types/parts'
 
 useHead({ title: 'Parts' })
 
 const route = useRoute()
-const page = computed(() => Math.max(1, Number(route.query.page) || 1))
+const { partsQuery, brandsQuery, hasFilters, reset } = usePartFilters()
 
 const { data, status, error, refresh } = await useFetch<PartsResponse>('/api/parts', {
-  query: { page }
+  query: partsQuery
 })
+const { data: brandData } = await useFetch<BrandsResponse>('/api/brands', {
+  query: brandsQuery
+})
+
+const emptyActions = computed(() => hasFilters.value
+  ? [{ label: 'Reset filters', color: 'neutral' as const, variant: 'outline' as const, onClick: () => reset() }]
+  : [])
 
 const pageLink = (target: number) => ({ query: { ...route.query, page: target } })
 </script>
@@ -19,13 +26,12 @@ const pageLink = (target: number) => ({ query: { ...route.query, page: target } 
       <h1 class="text-2xl font-semibold">
         Parts
       </h1>
-      <p
-        v-if="data"
-        class="text-sm text-muted"
-      >
-        {{ data.meta.total }} parts
-      </p>
     </div>
+
+    <PartFilters
+      :brands="brandData?.data ?? []"
+      :total="data?.meta.total"
+    />
 
     <UAlert
       v-if="error"
@@ -54,7 +60,8 @@ const pageLink = (target: number) => ({ query: { ...route.query, page: target } 
       v-else-if="!data?.data.length"
       icon="i-lucide-package-search"
       title="No parts found"
-      description="There are no parts on this page."
+      :description="hasFilters ? 'No parts match your search and filters.' : 'There are no parts on this page.'"
+      :actions="emptyActions"
       data-testid="parts-empty"
     />
 
