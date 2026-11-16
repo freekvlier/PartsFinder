@@ -6,7 +6,7 @@ Decisions and their rejected alternatives are in [DECISIONS.md](DECISIONS.md); c
 
 ## Stack
 
-| | |
+| Layer | Technology |
 | --- | --- |
 | Frontend | Nuxt 4, Vue 3, Nuxt UI, Tailwind CSS 4, server-side rendered |
 | Backend | Laravel 13 on PHP 8.5, REST JSON API, Sanctum bearer tokens |
@@ -24,20 +24,24 @@ make up      # frontend, API, MySQL and phpMyAdmin, detached
 make seed    # APP_KEY if missing, then migrate:fresh --seed
 ```
 
-Frontend on <http://localhost:3000>, API docs on <http://localhost/docs/api>, phpMyAdmin on <http://localhost:8080>. The frontend uses the seeded token `local-token-standard` (no discount); `local-token-discount` (10%) goes in `NUXT_API_TOKEN` in `frontend/.env`.
+Frontend on <http://localhost:3000>, API docs on <http://localhost/docs/api>, phpMyAdmin on <http://localhost:8080>.
+
+The seeder creates two workshops. By default the frontend acts as the one without discount (`local-token-standard`). To act as the one with 10% discount, comment that line out in `frontend/.env` and uncomment `local-token-discount`.
 
 | Command | Does |
 | --- | --- |
-| `make test` | Pest (through Sail) and Vitest |
-| `make lint` / `make format` | Pint, ESLint and typecheck; or fix what they can |
+| `make test` | Run Pest (through Sail) and Vitest |
+| `make lint` | Check with Pint, ESLint and the Nuxt typecheck |
+| `make format` | Fix formatting with Pint and ESLint |
 | `make types` | Regenerate the OpenAPI document and the frontend types after an endpoint change |
-| `make attach` / `make down` | Follow the logs; stop the stack |
+| `make attach` | Follow the logs of all containers |
+| `make down` | Stop the stack |
 
 Run Artisan through Sail (`./vendor/bin/sail artisan ...` in `backend/`).
 
 ## AI tools
 
-Claude Code (Anthropic) was used throughout for writing and refactoring code, tests and documentation, under the rules in `AGENTS.md`; every change was reviewed before it was kept. Documentation lookups went through the Laravel Boost and Nuxt MCP servers rather than from memory.
+Claude Code was used throughout for writing and refactoring code, tests and documentation, under the rules in `AGENTS.md`; every change was reviewed before it was kept. Documentation lookups went through the Laravel Boost and Nuxt MCP servers rather than from memory.
 
 ## Next
 
