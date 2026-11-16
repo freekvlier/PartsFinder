@@ -1,6 +1,6 @@
 interface ApiErrorBody {
-  message?: string
-  errors?: Record<string, string[]>
+    message?: string
+    errors?: Record<string, string[]>
 }
 
 /**
@@ -8,11 +8,11 @@ interface ApiErrorBody {
  * otherwise the error message of the API.
  */
 export function apiErrorMessages(error: unknown): string[] {
-  const body = (error as { data?: ApiErrorBody } | null)?.data
+    const body = (error as { data?: ApiErrorBody } | null)?.data
 
-  if (body?.errors) {
-    return Object.values(body.errors).flat()
-  }
+    if (body?.errors) {
+        return Object.values(body.errors).flat()
+    }
 
-  return [body?.message ?? 'Something went wrong. Please try again.']
+    return [body?.message ?? 'Something went wrong. Please try again.']
 }

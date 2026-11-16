@@ -1,582 +1,582 @@
 [
-  {
-    "name": "DAF XF 106 Sideskirt set",
-    "oem": "2101337",
-    "brand": "DAF",
-    "category": "Body",
-    "condition": "used",
-    "price": 373,
-    "stockQuantity": 1,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "blue",
-      "red",
-      "white"
-    ]
-  },
-  {
-    "name": "DAF XF 106 Front bumper",
-    "oem": "2102674",
-    "brand": "DAF",
-    "category": "Body",
-    "condition": "new",
-    "price": 449,
-    "stockQuantity": 2,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Mirror housing right",
-    "oem": "2104011",
-    "brand": "DAF",
-    "category": "Mirrors",
-    "condition": "used",
-    "price": 56,
-    "stockQuantity": 9,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "white",
-      "black",
-      "yellow"
-    ]
-  },
-  {
-    "name": "DAF XF 106 Headlamp left",
-    "oem": "2105348",
-    "brand": "DAF",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 290,
-    "stockQuantity": 4,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Tail lamp right",
-    "oem": "2106685",
-    "brand": "DAF",
-    "category": "Lighting",
-    "condition": "used",
-    "price": 58,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Air spring front",
-    "oem": "2108022",
-    "brand": "DAF",
-    "category": "Suspension",
-    "condition": "new",
-    "price": 131,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Brake disc",
-    "oem": "2109359",
-    "brand": "DAF",
-    "category": "Brakes",
-    "condition": "used",
-    "price": 110,
-    "stockQuantity": 11,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Turbocharger",
-    "oem": "2110696",
-    "brand": "DAF",
-    "category": "Engine",
-    "condition": "new",
-    "price": 1989,
-    "stockQuantity": 7,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Exhaust silencer",
-    "oem": "2112033",
-    "brand": "DAF",
-    "category": "Exhaust",
-    "condition": "used",
-    "price": 273,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Door panel left",
-    "oem": "2113370",
-    "brand": "DAF",
-    "category": "Cabin",
-    "condition": "new",
-    "price": 252,
-    "stockQuantity": 1,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Sideskirt set",
-    "oem": "2114707",
-    "brand": "Volvo",
-    "category": "Body",
-    "condition": "used",
-    "price": 384,
-    "stockQuantity": 3,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Front bumper",
-    "oem": "2116044",
-    "brand": "Volvo",
-    "category": "Body",
-    "condition": "new",
-    "price": 516,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "blue",
-      "yellow",
-      "white"
-    ]
-  },
-  {
-    "name": "Volvo FH 4 Mirror housing right",
-    "oem": "2117381",
-    "brand": "Volvo",
-    "category": "Mirrors",
-    "condition": "used",
-    "price": 50,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Headlamp left",
-    "oem": "2118718",
-    "brand": "Volvo",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 296,
-    "stockQuantity": 7,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Tail lamp right",
-    "oem": "2120055",
-    "brand": "Volvo",
-    "category": "Lighting",
-    "condition": "used",
-    "price": 56,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Air spring front",
-    "oem": "2121392",
-    "brand": "Volvo",
-    "category": "Suspension",
-    "condition": "new",
-    "price": 152,
-    "stockQuantity": 1,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Brake disc",
-    "oem": "2122729",
-    "brand": "Volvo",
-    "category": "Brakes",
-    "condition": "used",
-    "price": 125,
-    "stockQuantity": 9,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Turbocharger",
-    "oem": "2124066",
-    "brand": "Volvo",
-    "category": "Engine",
-    "condition": "new",
-    "price": 1723,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Exhaust silencer",
-    "oem": "2125403",
-    "brand": "Volvo",
-    "category": "Exhaust",
-    "condition": "used",
-    "price": 323,
-    "stockQuantity": 2,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Door panel left",
-    "oem": "2126740",
-    "brand": "Volvo",
-    "category": "Cabin",
-    "condition": "new",
-    "price": 270,
-    "stockQuantity": 11,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Sideskirt set",
-    "oem": "2128077",
-    "brand": "Scania",
-    "category": "Body",
-    "condition": "used",
-    "price": 371,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "yellow",
-      "red",
-      "blue"
-    ]
-  },
-  {
-    "name": "Scania R 450 Front bumper",
-    "oem": "2129414",
-    "brand": "Scania",
-    "category": "Body",
-    "condition": "new",
-    "price": 440,
-    "stockQuantity": 11,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Mirror housing right",
-    "oem": "2130751",
-    "brand": "Scania",
-    "category": "Mirrors",
-    "condition": "used",
-    "price": 50,
-    "stockQuantity": 5,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "white",
-      "red",
-      "yellow"
-    ]
-  },
-  {
-    "name": "Scania R 450 Headlamp left",
-    "oem": "2132088",
-    "brand": "Scania",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 318,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Tail lamp right",
-    "oem": "2133425",
-    "brand": "Scania",
-    "category": "Lighting",
-    "condition": "used",
-    "price": 61,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Air spring front",
-    "oem": "2134762",
-    "brand": "Scania",
-    "category": "Suspension",
-    "condition": "new",
-    "price": 136,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Brake disc",
-    "oem": "2136099",
-    "brand": "Scania",
-    "category": "Brakes",
-    "condition": "used",
-    "price": 110,
-    "stockQuantity": 5,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Turbocharger",
-    "oem": "2137436",
-    "brand": "Scania",
-    "category": "Engine",
-    "condition": "new",
-    "price": 1990,
-    "stockQuantity": 11,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Exhaust silencer",
-    "oem": "2138773",
-    "brand": "Scania",
-    "category": "Exhaust",
-    "condition": "used",
-    "price": 304,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Scania R 450 Door panel left",
-    "oem": "2140110",
-    "brand": "Scania",
-    "category": "Cabin",
-    "condition": "new",
-    "price": 275,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Sideskirt set",
-    "oem": "2141447",
-    "brand": "MAN",
-    "category": "Body",
-    "condition": "used",
-    "price": 364,
-    "stockQuantity": 4,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Front bumper",
-    "oem": "2142784",
-    "brand": "MAN",
-    "category": "Body",
-    "condition": "new",
-    "price": 452,
-    "stockQuantity": 7,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "blue",
-      "red",
-      "yellow"
-    ]
-  },
-  {
-    "name": "MAN TGX Mirror housing right",
-    "oem": "2144121",
-    "brand": "MAN",
-    "category": "Mirrors",
-    "condition": "used",
-    "price": 51,
-    "stockQuantity": 1,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Headlamp left",
-    "oem": "2145458",
-    "brand": "MAN",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 306,
-    "stockQuantity": 1,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Tail lamp right",
-    "oem": "2146795",
-    "brand": "MAN",
-    "category": "Lighting",
-    "condition": "used",
-    "price": 67,
-    "stockQuantity": 7,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Air spring front",
-    "oem": "2148132",
-    "brand": "MAN",
-    "category": "Suspension",
-    "condition": "new",
-    "price": 140,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Brake disc",
-    "oem": "2149469",
-    "brand": "MAN",
-    "category": "Brakes",
-    "condition": "used",
-    "price": 110,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Turbocharger",
-    "oem": "2150806",
-    "brand": "MAN",
-    "category": "Engine",
-    "condition": "new",
-    "price": 2070,
-    "stockQuantity": 6,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Exhaust silencer",
-    "oem": "2152143",
-    "brand": "MAN",
-    "category": "Exhaust",
-    "condition": "used",
-    "price": 273,
-    "stockQuantity": 8,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "MAN TGX Door panel left",
-    "oem": "2153480",
-    "brand": "MAN",
-    "category": "Cabin",
-    "condition": "new",
-    "price": 260,
-    "stockQuantity": 11,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Sideskirt set",
-    "oem": "2154817",
-    "brand": "Mercedes-Benz",
-    "category": "Body",
-    "condition": "used",
-    "price": 357,
-    "stockQuantity": 5,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "red",
-      "yellow",
-      "blue"
-    ]
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Front bumper",
-    "oem": "2156154",
-    "brand": "Mercedes-Benz",
-    "category": "Body",
-    "condition": "new",
-    "price": 499,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Mirror housing right",
-    "oem": "2157491",
-    "brand": "Mercedes-Benz",
-    "category": "Mirrors",
-    "condition": "used",
-    "price": 50,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg",
-    "colours": [
-      "black",
-      "yellow",
-      "red"
-    ]
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Headlamp left",
-    "oem": "2158828",
-    "brand": "Mercedes-Benz",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 306,
-    "stockQuantity": 3,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Tail lamp right",
-    "oem": "2160165",
-    "brand": "Mercedes-Benz",
-    "category": "Lighting",
-    "condition": "used",
-    "price": 62,
-    "stockQuantity": 2,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Air spring front",
-    "oem": "2161502",
-    "brand": "Mercedes-Benz",
-    "category": "Suspension",
-    "condition": "new",
-    "price": 158,
-    "stockQuantity": 2,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Brake disc",
-    "oem": "2162839",
-    "brand": "Mercedes-Benz",
-    "category": "Brakes",
-    "condition": "used",
-    "price": 108,
-    "stockQuantity": 3,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Turbocharger",
-    "oem": "2164176",
-    "brand": "Mercedes-Benz",
-    "category": "Engine",
-    "condition": "new",
-    "price": 2031,
-    "stockQuantity": 0,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Exhaust silencer",
-    "oem": "2165513",
-    "brand": "Mercedes-Benz",
-    "category": "Exhaust",
-    "condition": "used",
-    "price": 288,
-    "stockQuantity": 2,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Mercedes-Benz Actros MP4 Door panel left",
-    "oem": "2166850",
-    "brand": "Mercedes-Benz",
-    "category": "Cabin",
-    "condition": "new",
-    "price": 259,
-    "stockQuantity": 10,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Tail lamp right",
-    "oem": "2106685",
-    "brand": "DAF",
-    "category": "Lighting",
-    "condition": "new",
-    "price": 104,
-    "stockQuantity": 4,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Brake disc",
-    "oem": "2109359",
-    "brand": "DAF",
-    "category": "Brakes",
-    "condition": "new",
-    "price": 198,
-    "stockQuantity": 5,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "DAF XF 106 Exhaust silencer",
-    "oem": "2112033",
-    "brand": "DAF",
-    "category": "Exhaust",
-    "condition": "new",
-    "price": 491,
-    "stockQuantity": 3,
-    "image": "/img/placeholder-part.svg"
-  },
-  {
-    "name": "Volvo FH 4 Sideskirt set",
-    "oem": "2114707",
-    "brand": "Volvo",
-    "category": "Body",
-    "condition": "new",
-    "price": 691,
-    "stockQuantity": 5,
-    "image": "/img/placeholder-part.svg"
-  }
+    {
+        "name": "DAF XF 106 Sideskirt set",
+        "oem": "2101337",
+        "brand": "DAF",
+        "category": "Body",
+        "condition": "used",
+        "price": 373,
+        "stockQuantity": 1,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "blue",
+            "red",
+            "white"
+        ]
+    },
+    {
+        "name": "DAF XF 106 Front bumper",
+        "oem": "2102674",
+        "brand": "DAF",
+        "category": "Body",
+        "condition": "new",
+        "price": 449,
+        "stockQuantity": 2,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Mirror housing right",
+        "oem": "2104011",
+        "brand": "DAF",
+        "category": "Mirrors",
+        "condition": "used",
+        "price": 56,
+        "stockQuantity": 9,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "white",
+            "black",
+            "yellow"
+        ]
+    },
+    {
+        "name": "DAF XF 106 Headlamp left",
+        "oem": "2105348",
+        "brand": "DAF",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 290,
+        "stockQuantity": 4,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Tail lamp right",
+        "oem": "2106685",
+        "brand": "DAF",
+        "category": "Lighting",
+        "condition": "used",
+        "price": 58,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Air spring front",
+        "oem": "2108022",
+        "brand": "DAF",
+        "category": "Suspension",
+        "condition": "new",
+        "price": 131,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Brake disc",
+        "oem": "2109359",
+        "brand": "DAF",
+        "category": "Brakes",
+        "condition": "used",
+        "price": 110,
+        "stockQuantity": 11,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Turbocharger",
+        "oem": "2110696",
+        "brand": "DAF",
+        "category": "Engine",
+        "condition": "new",
+        "price": 1989,
+        "stockQuantity": 7,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Exhaust silencer",
+        "oem": "2112033",
+        "brand": "DAF",
+        "category": "Exhaust",
+        "condition": "used",
+        "price": 273,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Door panel left",
+        "oem": "2113370",
+        "brand": "DAF",
+        "category": "Cabin",
+        "condition": "new",
+        "price": 252,
+        "stockQuantity": 1,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Sideskirt set",
+        "oem": "2114707",
+        "brand": "Volvo",
+        "category": "Body",
+        "condition": "used",
+        "price": 384,
+        "stockQuantity": 3,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Front bumper",
+        "oem": "2116044",
+        "brand": "Volvo",
+        "category": "Body",
+        "condition": "new",
+        "price": 516,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "blue",
+            "yellow",
+            "white"
+        ]
+    },
+    {
+        "name": "Volvo FH 4 Mirror housing right",
+        "oem": "2117381",
+        "brand": "Volvo",
+        "category": "Mirrors",
+        "condition": "used",
+        "price": 50,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Headlamp left",
+        "oem": "2118718",
+        "brand": "Volvo",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 296,
+        "stockQuantity": 7,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Tail lamp right",
+        "oem": "2120055",
+        "brand": "Volvo",
+        "category": "Lighting",
+        "condition": "used",
+        "price": 56,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Air spring front",
+        "oem": "2121392",
+        "brand": "Volvo",
+        "category": "Suspension",
+        "condition": "new",
+        "price": 152,
+        "stockQuantity": 1,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Brake disc",
+        "oem": "2122729",
+        "brand": "Volvo",
+        "category": "Brakes",
+        "condition": "used",
+        "price": 125,
+        "stockQuantity": 9,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Turbocharger",
+        "oem": "2124066",
+        "brand": "Volvo",
+        "category": "Engine",
+        "condition": "new",
+        "price": 1723,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Exhaust silencer",
+        "oem": "2125403",
+        "brand": "Volvo",
+        "category": "Exhaust",
+        "condition": "used",
+        "price": 323,
+        "stockQuantity": 2,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Door panel left",
+        "oem": "2126740",
+        "brand": "Volvo",
+        "category": "Cabin",
+        "condition": "new",
+        "price": 270,
+        "stockQuantity": 11,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Sideskirt set",
+        "oem": "2128077",
+        "brand": "Scania",
+        "category": "Body",
+        "condition": "used",
+        "price": 371,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "yellow",
+            "red",
+            "blue"
+        ]
+    },
+    {
+        "name": "Scania R 450 Front bumper",
+        "oem": "2129414",
+        "brand": "Scania",
+        "category": "Body",
+        "condition": "new",
+        "price": 440,
+        "stockQuantity": 11,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Mirror housing right",
+        "oem": "2130751",
+        "brand": "Scania",
+        "category": "Mirrors",
+        "condition": "used",
+        "price": 50,
+        "stockQuantity": 5,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "white",
+            "red",
+            "yellow"
+        ]
+    },
+    {
+        "name": "Scania R 450 Headlamp left",
+        "oem": "2132088",
+        "brand": "Scania",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 318,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Tail lamp right",
+        "oem": "2133425",
+        "brand": "Scania",
+        "category": "Lighting",
+        "condition": "used",
+        "price": 61,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Air spring front",
+        "oem": "2134762",
+        "brand": "Scania",
+        "category": "Suspension",
+        "condition": "new",
+        "price": 136,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Brake disc",
+        "oem": "2136099",
+        "brand": "Scania",
+        "category": "Brakes",
+        "condition": "used",
+        "price": 110,
+        "stockQuantity": 5,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Turbocharger",
+        "oem": "2137436",
+        "brand": "Scania",
+        "category": "Engine",
+        "condition": "new",
+        "price": 1990,
+        "stockQuantity": 11,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Exhaust silencer",
+        "oem": "2138773",
+        "brand": "Scania",
+        "category": "Exhaust",
+        "condition": "used",
+        "price": 304,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Scania R 450 Door panel left",
+        "oem": "2140110",
+        "brand": "Scania",
+        "category": "Cabin",
+        "condition": "new",
+        "price": 275,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Sideskirt set",
+        "oem": "2141447",
+        "brand": "MAN",
+        "category": "Body",
+        "condition": "used",
+        "price": 364,
+        "stockQuantity": 4,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Front bumper",
+        "oem": "2142784",
+        "brand": "MAN",
+        "category": "Body",
+        "condition": "new",
+        "price": 452,
+        "stockQuantity": 7,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "blue",
+            "red",
+            "yellow"
+        ]
+    },
+    {
+        "name": "MAN TGX Mirror housing right",
+        "oem": "2144121",
+        "brand": "MAN",
+        "category": "Mirrors",
+        "condition": "used",
+        "price": 51,
+        "stockQuantity": 1,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Headlamp left",
+        "oem": "2145458",
+        "brand": "MAN",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 306,
+        "stockQuantity": 1,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Tail lamp right",
+        "oem": "2146795",
+        "brand": "MAN",
+        "category": "Lighting",
+        "condition": "used",
+        "price": 67,
+        "stockQuantity": 7,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Air spring front",
+        "oem": "2148132",
+        "brand": "MAN",
+        "category": "Suspension",
+        "condition": "new",
+        "price": 140,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Brake disc",
+        "oem": "2149469",
+        "brand": "MAN",
+        "category": "Brakes",
+        "condition": "used",
+        "price": 110,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Turbocharger",
+        "oem": "2150806",
+        "brand": "MAN",
+        "category": "Engine",
+        "condition": "new",
+        "price": 2070,
+        "stockQuantity": 6,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Exhaust silencer",
+        "oem": "2152143",
+        "brand": "MAN",
+        "category": "Exhaust",
+        "condition": "used",
+        "price": 273,
+        "stockQuantity": 8,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "MAN TGX Door panel left",
+        "oem": "2153480",
+        "brand": "MAN",
+        "category": "Cabin",
+        "condition": "new",
+        "price": 260,
+        "stockQuantity": 11,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Sideskirt set",
+        "oem": "2154817",
+        "brand": "Mercedes-Benz",
+        "category": "Body",
+        "condition": "used",
+        "price": 357,
+        "stockQuantity": 5,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "red",
+            "yellow",
+            "blue"
+        ]
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Front bumper",
+        "oem": "2156154",
+        "brand": "Mercedes-Benz",
+        "category": "Body",
+        "condition": "new",
+        "price": 499,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Mirror housing right",
+        "oem": "2157491",
+        "brand": "Mercedes-Benz",
+        "category": "Mirrors",
+        "condition": "used",
+        "price": 50,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg",
+        "colours": [
+            "black",
+            "yellow",
+            "red"
+        ]
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Headlamp left",
+        "oem": "2158828",
+        "brand": "Mercedes-Benz",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 306,
+        "stockQuantity": 3,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Tail lamp right",
+        "oem": "2160165",
+        "brand": "Mercedes-Benz",
+        "category": "Lighting",
+        "condition": "used",
+        "price": 62,
+        "stockQuantity": 2,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Air spring front",
+        "oem": "2161502",
+        "brand": "Mercedes-Benz",
+        "category": "Suspension",
+        "condition": "new",
+        "price": 158,
+        "stockQuantity": 2,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Brake disc",
+        "oem": "2162839",
+        "brand": "Mercedes-Benz",
+        "category": "Brakes",
+        "condition": "used",
+        "price": 108,
+        "stockQuantity": 3,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Turbocharger",
+        "oem": "2164176",
+        "brand": "Mercedes-Benz",
+        "category": "Engine",
+        "condition": "new",
+        "price": 2031,
+        "stockQuantity": 0,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Exhaust silencer",
+        "oem": "2165513",
+        "brand": "Mercedes-Benz",
+        "category": "Exhaust",
+        "condition": "used",
+        "price": 288,
+        "stockQuantity": 2,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Mercedes-Benz Actros MP4 Door panel left",
+        "oem": "2166850",
+        "brand": "Mercedes-Benz",
+        "category": "Cabin",
+        "condition": "new",
+        "price": 259,
+        "stockQuantity": 10,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Tail lamp right",
+        "oem": "2106685",
+        "brand": "DAF",
+        "category": "Lighting",
+        "condition": "new",
+        "price": 104,
+        "stockQuantity": 4,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Brake disc",
+        "oem": "2109359",
+        "brand": "DAF",
+        "category": "Brakes",
+        "condition": "new",
+        "price": 198,
+        "stockQuantity": 5,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "DAF XF 106 Exhaust silencer",
+        "oem": "2112033",
+        "brand": "DAF",
+        "category": "Exhaust",
+        "condition": "new",
+        "price": 491,
+        "stockQuantity": 3,
+        "image": "/img/placeholder-part.svg"
+    },
+    {
+        "name": "Volvo FH 4 Sideskirt set",
+        "oem": "2114707",
+        "brand": "Volvo",
+        "category": "Body",
+        "condition": "new",
+        "price": 691,
+        "stockQuantity": 5,
+        "image": "/img/placeholder-part.svg"
+    }
 ]

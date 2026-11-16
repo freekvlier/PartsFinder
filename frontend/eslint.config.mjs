@@ -4,18 +4,18 @@ import betterTailwindcss from 'eslint-plugin-better-tailwindcss'
 import { getDefaultAttributes } from 'eslint-plugin-better-tailwindcss/api/defaults'
 
 export default withNuxt(
-  { ignores: ['app/types/api.d.ts'] },
-  { rules: { '@stylistic/max-len': ['error', { code: 120, ignoreUrls: true }] } },
-  betterTailwindcss.configs['correctness-error'],
-  {
-    settings: {
-      'better-tailwindcss': {
-        entryPoint: 'app/assets/css/main.css',
-        attributes: [
-          ...getDefaultAttributes(),
-          ['^v-bind:ui$', [{ match: 'objectValues' }]]
-        ]
-      }
+    { ignores: ['app/types/api.d.ts'] },
+    { rules: { '@stylistic/max-len': ['error', { code: 120, ignoreUrls: true }] } },
+    betterTailwindcss.configs['correctness-error'],
+    {
+        settings: {
+            'better-tailwindcss': {
+                entryPoint: 'app/assets/css/main.css',
+                attributes: [
+                    ...getDefaultAttributes(),
+                    ['^v-bind:ui$', [{ match: 'objectValues' }]]
+                ]
+            }
+        }
     }
-  }
 )

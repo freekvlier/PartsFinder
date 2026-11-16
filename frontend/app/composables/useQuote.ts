@@ -3,23 +3,23 @@ import type { Quote, QuoteResponse } from '~/types/quotes'
 const storageKey = 'partsfinder.quote-id'
 
 function readStoredId(): string | null {
-  try {
-    return localStorage.getItem(storageKey)
-  } catch {
-    return null
-  }
+    try {
+        return localStorage.getItem(storageKey)
+    } catch {
+        return null
+    }
 }
 
 function storeId(id: number | null) {
-  try {
-    if (id === null) {
-      localStorage.removeItem(storageKey)
-    } else {
-      localStorage.setItem(storageKey, String(id))
-    }
-  } catch {
+    try {
+        if (id === null) {
+            localStorage.removeItem(storageKey)
+        } else {
+            localStorage.setItem(storageKey, String(id))
+        }
+    } catch {
     // The quote still works without storage; it just is not restored after a refresh.
-  }
+    }
 }
 
 /**
@@ -27,61 +27,61 @@ function storeId(id: number | null) {
  * Every action returns the quote as the API calculated it; nothing is added up here.
  */
 export function useQuote() {
-  const quote = useState<Quote | null>('quote', () => null)
-  const isOpen = useState('quote-drawer-open', () => false)
-  const pending = useState('quote-pending', () => false)
+    const quote = useState<Quote | null>('quote', () => null)
+    const isOpen = useState('quote-drawer-open', () => false)
+    const pending = useState('quote-pending', () => false)
 
-  async function send(path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: Record<string, unknown>) {
-    pending.value = true
-    try {
-      const response = await $fetch<QuoteResponse>(path, { method, body })
-      quote.value = response.data
-      storeId(response.data.id)
+    async function send(path: string, method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: Record<string, unknown>) {
+        pending.value = true
+        try {
+            const response = await $fetch<QuoteResponse>(path, { method, body })
+            quote.value = response.data
+            storeId(response.data.id)
 
-      return response.data
-    } finally {
-      pending.value = false
-    }
-  }
-
-  async function restore() {
-    const id = readStoredId()
-
-    if (!id) {
-      return
+            return response.data
+        } finally {
+            pending.value = false
+        }
     }
 
-    try {
-      await send(`/api/quotes/${id}`, 'GET')
-    } catch {
-      storeId(null)
-      quote.value = null
-    }
-  }
+    async function restore() {
+        const id = readStoredId()
 
-  async function startNew() {
-    return await send('/api/quotes', 'POST')
-  }
+        if (!id) {
+            return
+        }
 
-  async function addLine(partId: number, quantity: number, colour?: string) {
-    if (!quote.value || quote.value.status === 'submitted') {
-      await startNew()
+        try {
+            await send(`/api/quotes/${id}`, 'GET')
+        } catch {
+            storeId(null)
+            quote.value = null
+        }
     }
 
-    return await send(`/api/quotes/${quote.value!.id}/lines`, 'POST', { partId, quantity, colour })
-  }
+    async function startNew() {
+        return await send('/api/quotes', 'POST')
+    }
 
-  async function changeQuantity(lineId: number, quantity: number) {
-    return await send(`/api/quotes/${quote.value!.id}/lines/${lineId}`, 'PATCH', { quantity })
-  }
+    async function addLine(partId: number, quantity: number, colour?: string) {
+        if (!quote.value || quote.value.status === 'submitted') {
+            await startNew()
+        }
 
-  async function removeLine(lineId: number) {
-    return await send(`/api/quotes/${quote.value!.id}/lines/${lineId}`, 'DELETE')
-  }
+        return await send(`/api/quotes/${quote.value!.id}/lines`, 'POST', { partId, quantity, colour })
+    }
 
-  async function submit() {
-    return await send(`/api/quotes/${quote.value!.id}/submit`, 'POST')
-  }
+    async function changeQuantity(lineId: number, quantity: number) {
+        return await send(`/api/quotes/${quote.value!.id}/lines/${lineId}`, 'PATCH', { quantity })
+    }
 
-  return { quote, isOpen, pending, restore, startNew, addLine, changeQuantity, removeLine, submit }
+    async function removeLine(lineId: number) {
+        return await send(`/api/quotes/${quote.value!.id}/lines/${lineId}`, 'DELETE')
+    }
+
+    async function submit() {
+        return await send(`/api/quotes/${quote.value!.id}/submit`, 'POST')
+    }
+
+    return { quote, isOpen, pending, restore, startNew, addLine, changeQuantity, removeLine, submit }
 }

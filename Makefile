@@ -2,7 +2,7 @@ SAIL := cd backend && ./vendor/bin/sail
 
 .DEFAULT_GOAL := up
 
-.PHONY: setup up down seed types test test-backend test-frontend
+.PHONY: setup up down seed types format lint test test-backend test-frontend
 
 setup:
 	cd backend && cp --update=none .env.example .env
@@ -23,6 +23,14 @@ seed:
 types:
 	$(SAIL) artisan scramble:export
 	cd frontend && pnpm generate:api-types
+
+format:
+	$(SAIL) bin pint
+	cd frontend && pnpm eslint --fix .
+
+lint:
+	$(SAIL) bin pint --test
+	cd frontend && pnpm lint && pnpm typecheck
 
 test: test-backend test-frontend
 

@@ -8,10 +8,10 @@ import { $fetch, fetch, setup } from '@nuxt/test-utils/e2e'
 const received: { url?: string, authorization?: string }[] = []
 
 const upstream = createServer((request, response) => {
-  received.push({ url: request.url, authorization: request.headers.authorization })
-  response.setHeader('Content-Type', 'application/json')
-  response.statusCode = request.url?.startsWith('/api/quotes/404') ? 404 : 200
-  response.end(JSON.stringify({ ok: true }))
+    received.push({ url: request.url, authorization: request.headers.authorization })
+    response.setHeader('Content-Type', 'application/json')
+    response.statusCode = request.url?.startsWith('/api/quotes/404') ? 404 : 200
+    response.end(JSON.stringify({ ok: true }))
 })
 await new Promise<void>(resolve => upstream.listen(0, resolve))
 const port = (upstream.address() as AddressInfo).port
@@ -20,23 +20,23 @@ process.env.NUXT_API_BASE = `http://localhost:${port}/api`
 process.env.NUXT_API_TOKEN = 'test-token'
 
 await setup({
-  rootDir: fileURLToPath(new URL('..', import.meta.url)),
-  server: true
+    rootDir: fileURLToPath(new URL('..', import.meta.url)),
+    server: true
 })
 
 describe('API proxy', () => {
-  it('forwards the path and query to Laravel with the workshop bearer token added', async () => {
-    await $fetch('/api/parts?q=sideskirt&brand[]=DAF&page=2')
+    it('forwards the path and query to Laravel with the workshop bearer token added', async () => {
+        await $fetch('/api/parts?q=sideskirt&brand[]=DAF&page=2')
 
-    expect(received.at(-1)).toEqual({
-      url: '/api/parts?q=sideskirt&brand[]=DAF&page=2',
-      authorization: 'Bearer test-token'
+        expect(received.at(-1)).toEqual({
+            url: '/api/parts?q=sideskirt&brand[]=DAF&page=2',
+            authorization: 'Bearer test-token'
+        })
     })
-  })
 
-  it('passes Laravel error statuses through unchanged', async () => {
-    const response = await fetch('/api/quotes/404')
+    it('passes Laravel error statuses through unchanged', async () => {
+        const response = await fetch('/api/quotes/404')
 
-    expect(response.status).toBe(404)
-  })
+        expect(response.status).toBe(404)
+    })
 })

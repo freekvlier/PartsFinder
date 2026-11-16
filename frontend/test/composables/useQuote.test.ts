@@ -10,19 +10,19 @@ let calls: Call[]
 let missing: Set<string>
 
 function endpoint(url: string, method: string, respond: () => unknown, status = 200) {
-  registerEndpoint(url, {
-    method,
-    handler: async (event) => {
-      const body = method === 'GET' ? getQuery(event) : await readBody(event).catch(() => undefined)
-      calls.push({ method, url, body })
-      if (missing.has(url)) {
-        setResponseStatus(event, 404)
-        return { message: 'Not found.' }
-      }
-      setResponseStatus(event, status)
-      return respond()
-    }
-  })
+    registerEndpoint(url, {
+        method,
+        handler: async (event) => {
+            const body = method === 'GET' ? getQuery(event) : await readBody(event).catch(() => undefined)
+            calls.push({ method, url, body })
+            if (missing.has(url)) {
+                setResponseStatus(event, 404)
+                return { message: 'Not found.' }
+            }
+            setResponseStatus(event, status)
+            return respond()
+        }
+    })
 }
 
 endpoint('/api/quotes', 'POST', () => ({ data: makeQuote({ id: 8, lines: [] }) }), 201)
@@ -32,90 +32,92 @@ const lineAdded = makeQuote({ id: 8, lines: [makeLine({ partId: 3, colour: 'red'
 endpoint('/api/quotes/8/lines', 'POST', () => ({ data: lineAdded }), 201)
 
 beforeEach(() => {
-  calls = []
-  missing = new Set(['/api/quotes/404'])
-  localStorage.clear()
-  useState('quote').value = null
-  useState('quote-drawer-open').value = false
+    calls = []
+    missing = new Set(['/api/quotes/404'])
+    localStorage.clear()
+    useState('quote').value = null
+    useState('quote-drawer-open').value = false
 })
 
 describe('useQuote', () => {
-  it('restores the open quote of a refresh from the API using the stored id', async () => {
-    localStorage.setItem(storageKey, '7')
-    const { quote, restore } = useQuote()
+    it('restores the open quote of a refresh from the API using the stored id', async () => {
+        localStorage.setItem(storageKey, '7')
+        const { quote, restore } = useQuote()
 
-    await restore()
+        await restore()
 
-    expect(calls).toEqual([{ method: 'GET', url: '/api/quotes/7', body: {} }])
-    expect(quote.value?.id).toBe(7)
-  })
+        expect(calls).toEqual([{ method: 'GET', url: '/api/quotes/7', body: {} }])
+        expect(quote.value?.id).toBe(7)
+    })
 
-  it('does not call the API when no quote id is stored', async () => {
-    const { quote, restore } = useQuote()
+    it('does not call the API when no quote id is stored', async () => {
+        const { quote, restore } = useQuote()
 
-    await restore()
+        await restore()
 
-    expect(calls).toEqual([])
-    expect(quote.value).toBeNull()
-  })
+        expect(calls).toEqual([])
+        expect(quote.value).toBeNull()
+    })
 
-  it('forgets a stored id the API no longer knows', async () => {
-    localStorage.setItem(storageKey, '404')
-    const { quote, restore } = useQuote()
+    it('forgets a stored id the API no longer knows', async () => {
+        localStorage.setItem(storageKey, '404')
+        const { quote, restore } = useQuote()
 
-    await restore()
+        await restore()
 
-    expect(quote.value).toBeNull()
-    expect(localStorage.getItem(storageKey)).toBeNull()
-  })
+        expect(quote.value).toBeNull()
+        expect(localStorage.getItem(storageKey)).toBeNull()
+    })
 
-  it('creates a quote when the first part is added and stores its id', async () => {
-    const { quote, addLine } = useQuote()
+    it('creates a quote when the first part is added and stores its id', async () => {
+        const { quote, addLine } = useQuote()
 
-    await addLine(3, 2, 'red')
+        await addLine(3, 2, 'red')
 
-    expect(calls.map(call => `${call.method} ${call.url}`)).toEqual(['POST /api/quotes', 'POST /api/quotes/8/lines'])
-    expect(calls[1]!.body).toEqual({ partId: 3, quantity: 2, colour: 'red' })
-    expect(quote.value?.lines).toHaveLength(1)
-    expect(localStorage.getItem(storageKey)).toBe('8')
-  })
+        expect(calls.map(call => `${call.method} ${call.url}`))
+            .toEqual(['POST /api/quotes', 'POST /api/quotes/8/lines'])
+        expect(calls[1]!.body).toEqual({ partId: 3, quantity: 2, colour: 'red' })
+        expect(quote.value?.lines).toHaveLength(1)
+        expect(localStorage.getItem(storageKey)).toBe('8')
+    })
 
-  it('adds to the existing draft instead of creating another quote', async () => {
-    useState('quote').value = makeQuote({ id: 8, lines: [] })
-    const { addLine } = useQuote()
+    it('adds to the existing draft instead of creating another quote', async () => {
+        useState('quote').value = makeQuote({ id: 8, lines: [] })
+        const { addLine } = useQuote()
 
-    await addLine(3, 1)
+        await addLine(3, 1)
 
-    expect(calls.map(call => `${call.method} ${call.url}`)).toEqual(['POST /api/quotes/8/lines'])
-  })
+        expect(calls.map(call => `${call.method} ${call.url}`)).toEqual(['POST /api/quotes/8/lines'])
+    })
 
-  it('starts a new quote when the current one has been submitted', async () => {
-    useState('quote').value = makeQuote({ id: 5, status: 'submitted' })
-    const { addLine } = useQuote()
+    it('starts a new quote when the current one has been submitted', async () => {
+        useState('quote').value = makeQuote({ id: 5, status: 'submitted' })
+        const { addLine } = useQuote()
 
-    await addLine(3, 1)
+        await addLine(3, 1)
 
-    expect(calls.map(call => `${call.method} ${call.url}`)).toEqual(['POST /api/quotes', 'POST /api/quotes/8/lines'])
-  })
+        expect(calls.map(call => `${call.method} ${call.url}`))
+            .toEqual(['POST /api/quotes', 'POST /api/quotes/8/lines'])
+    })
 
-  it('starts a new quote on request and remembers it', async () => {
-    useState('quote').value = makeQuote({ id: 5, status: 'submitted' })
-    const { quote, startNew } = useQuote()
+    it('starts a new quote on request and remembers it', async () => {
+        useState('quote').value = makeQuote({ id: 5, status: 'submitted' })
+        const { quote, startNew } = useQuote()
 
-    await startNew()
+        await startNew()
 
-    expect(quote.value?.id).toBe(8)
-    expect(quote.value?.lines).toEqual([])
-    expect(localStorage.getItem(storageKey)).toBe('8')
-  })
+        expect(quote.value?.id).toBe(8)
+        expect(quote.value?.lines).toEqual([])
+        expect(localStorage.getItem(storageKey)).toBe('8')
+    })
 
-  it('is not pending once a request has finished', async () => {
-    const { pending, startNew } = useQuote()
+    it('is not pending once a request has finished', async () => {
+        const { pending, startNew } = useQuote()
 
-    const request = startNew()
-    expect(pending.value).toBe(true)
-    await request
+        const request = startNew()
+        expect(pending.value).toBe(true)
+        await request
 
-    await vi.waitFor(() => expect(pending.value).toBe(false))
-  })
+        await vi.waitFor(() => expect(pending.value).toBe(false))
+    })
 })
