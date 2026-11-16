@@ -11,6 +11,11 @@ use Illuminate\Console\Command;
 #[Description('Create a workshop and print its API token')]
 class CreateWorkshop extends Command
 {
+    /**
+     * Create a workshop and print its API token.
+     *
+     * @return int The command exit code.
+     */
     public function handle(): int
     {
         $discount = $this->argument('discount');

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class WorkshopFactory extends Factory
 {
     /**
+     * Define the default state of the model.
+     *
      * @return array<string, mixed>
      */
     public function definition(): array

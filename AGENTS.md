@@ -17,6 +17,15 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 - Schema changes go through migrations, with foreign keys and indexes on the columns that are searched and filtered. Seed data goes through seeders.
 - The frontend reads its API URL and token from environment variables.
 
+## Data model
+
+- `parts` hold `brand_id`, `category_id`, `name`, `oem`, `condition` (`App\Condition` enum), `price_cents`, `stock_quantity` and `image`. Brand, category and colour are tables referenced by foreign keys. OEM is indexed but not unique (a new and a used part can share it).
+- Colours are many-to-many through the `colour_part` pivot. A part without colours has no pivot rows. Stock is one number per part, shared by all its colours.
+- Money is stored and returned as integer cents (`price_cents`), never as decimals or floats. Only the frontend divides by 100, for display.
+- `Part::in_stock` is derived from `stock_quantity`, not stored.
+- Quote lines hold `part_id` and a nullable `colour_id` pointing at `colours`.
+- `PartSeeder` seeds the catalogue from `database/seeders/data/parts.json` (prices in euros, converted to cents) in every environment; `WorkshopSeeder` is local only.
+
 ## Testing
 
 - Backend: a feature test for every endpoint, including unhappy paths, plus a test per business rule.
@@ -51,6 +60,9 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 ## Frontend
 
 - Rendering is SSR. Components call the same-origin `/api/...` with `useFetch`; the Nitro route `frontend/server/api/[...path].ts` only forwards the request to Laravel and adds the workshop bearer token. It holds no logic. The token stays server-side and the browser never calls Laravel directly.
+- Page state lives in the URL (`useRoute().query`); `useFetch('/api/...', { query: { page } })` refetches when it changes. Types for API data come from the generated `~/types/api` (see `app/types/parts.ts`), never hand-written.
+- Prices arrive as integer cents; display them with `formatPrice()` from `app/utils`.
+- Page and component tests mount with `mountSuspended` and mock the API with `registerEndpoint`; call `clearNuxtData()` before each test, because `useFetch` caches by key. Tests that start the real server (`apiProxy.test.ts`) must set `NUXT_API_BASE` and `NUXT_API_TOKEN` in `process.env`, or a local `frontend/.env` overrides them.
 - Env variables (private runtime config, see `frontend/.env.example`): `NUXT_API_BASE` (Laravel API URL, in Docker `http://laravel.test/api`) and `NUXT_API_TOKEN`.
 
 ## Docker

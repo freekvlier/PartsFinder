@@ -1,0 +1,92 @@
+<?php
+
+use App\Condition;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Part;
+use App\Models\Workshop;
+
+beforeEach(function () {
+    $this->withToken(Workshop::factory()->create()->createToken('api')->plainTextToken);
+});
+
+test('a request without a token is rejected with 401', function () {
+    $this->withoutToken()->getJson('/api/parts')->assertUnauthorized();
+});
+
+test('it lists parts with the data the overview needs', function () {
+    Part::factory()
+        ->for(Brand::factory()->create(['name' => 'DAF']))
+        ->for(Category::factory()->create(['name' => 'Body']))
+        ->withColours(['white', 'red'])
+        ->create([
+            'name' => 'DAF XF 106 Sideskirt set',
+            'oem' => '2119711',
+            'condition' => Condition::Used,
+            'price_cents' => 79500,
+            'stock_quantity' => 3,
+            'image' => '/img/placeholder-part.svg',
+        ]);
+
+    $this->getJson('/api/parts')
+        ->assertOk()
+        ->assertJsonPath('data.0.name', 'DAF XF 106 Sideskirt set')
+        ->assertJsonPath('data.0.oem', '2119711')
+        ->assertJsonPath('data.0.brand', 'DAF')
+        ->assertJsonPath('data.0.category', 'Body')
+        ->assertJsonPath('data.0.condition', 'used')
+        ->assertJsonPath('data.0.priceCents', 79500)
+        ->assertJsonPath('data.0.stockQuantity', 3)
+        ->assertJsonPath('data.0.inStock', true)
+        ->assertJsonPath('data.0.image', '/img/placeholder-part.svg')
+        ->assertJsonCount(2, 'data.0.colours');
+});
+
+test('a part without stock is not in stock', function () {
+    Part::factory()->create(['stock_quantity' => 0]);
+
+    $this->getJson('/api/parts')->assertJsonPath('data.0.inStock', false);
+});
+
+test('a part without colours has an empty colour list', function () {
+    Part::factory()->create();
+
+    $this->getJson('/api/parts')->assertJsonPath('data.0.colours', []);
+});
+
+test('it paginates and reports the page info in meta', function () {
+    Part::factory()->count(5)->sequence(fn ($sequence) => ['name' => 'Part '.$sequence->index])->create();
+
+    $this->getJson('/api/parts?per_page=2&page=2')
+        ->assertOk()
+        ->assertJsonPath('meta.total', 5)
+        ->assertJsonPath('meta.current_page', 2)
+        ->assertJsonPath('meta.last_page', 3)
+        ->assertJsonPath('meta.per_page', 2)
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.name', 'Part 2')
+        ->assertJsonPath('data.1.name', 'Part 3')
+        ->assertJsonMissing(['name' => 'Part 0'])
+        ->assertJsonMissing(['name' => 'Part 4']);
+});
+
+test('the page size defaults to 12', function () {
+    Part::factory()->count(13)->create();
+
+    $this->getJson('/api/parts')
+        ->assertJsonCount(12, 'data')
+        ->assertJsonPath('meta.per_page', 12);
+});
+
+test('parts are ordered by name, then id, so pages stay stable', function () {
+    Part::factory()->create(['name' => 'B part']);
+    Part::factory()->create(['name' => 'A part']);
+
+    $this->getJson('/api/parts')
+        ->assertJsonPath('data.0.name', 'A part')
+        ->assertJsonPath('data.1.name', 'B part');
+});
+
+test('an invalid page size or page is rejected with 422', function (string $query) {
+    $this->getJson('/api/parts?'.$query)->assertUnprocessable();
+})->with(['too many per page' => 'per_page=51', 'zero per page' => 'per_page=0', 'page zero' => 'page=0', 'not a number' => 'page=abc']);

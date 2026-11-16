@@ -16,12 +16,12 @@ const upstream = createServer((request, response) => {
 await new Promise<void>(resolve => upstream.listen(0, resolve))
 const port = (upstream.address() as AddressInfo).port
 
+process.env.NUXT_API_BASE = `http://localhost:${port}/api`
+process.env.NUXT_API_TOKEN = 'test-token'
+
 await setup({
   rootDir: fileURLToPath(new URL('..', import.meta.url)),
-  server: true,
-  nuxtConfig: {
-    runtimeConfig: { apiBase: `http://localhost:${port}/api`, apiToken: 'test-token' }
-  }
+  server: true
 })
 
 describe('API proxy', () => {

@@ -15,6 +15,8 @@ class Workshop extends Authenticatable
     use HasApiTokens, HasFactory;
 
     /**
+     * The attribute casts of the model.
+     *
      * @return array<string, string>
      */
     protected function casts(): array

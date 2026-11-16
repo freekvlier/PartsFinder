@@ -11,6 +11,9 @@ use Illuminate\Database\Seeder;
  */
 class WorkshopSeeder extends Seeder
 {
+    /**
+     * Seed one workshop without discount and one with 10%, each with a fixed API token.
+     */
     public function run(): void
     {
         $workshops = [
