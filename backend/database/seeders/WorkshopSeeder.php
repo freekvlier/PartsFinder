@@ -15,6 +15,7 @@ class WorkshopSeeder extends Seeder
      */
     public function run(): void
     {
+        // DEV ONLY: these tokens are not safe for production.
         $workshops = [
             'local-token-standard' => ['name' => 'Van Dijk Trucks', 'discount_percentage' => 0],
             'local-token-discount' => ['name' => 'Jansen Truck Service', 'discount_percentage' => 10],
