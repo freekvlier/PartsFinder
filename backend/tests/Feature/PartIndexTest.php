@@ -89,4 +89,36 @@ test('parts are ordered by name, then id, so pages stay stable', function () {
 
 test('an invalid page size or page is rejected with 422', function (string $query) {
     $this->getJson('/api/parts?'.$query)->assertUnprocessable();
-})->with(['too many per page' => 'per_page=51', 'zero per page' => 'per_page=0', 'page zero' => 'page=0', 'not a number' => 'page=abc']);
+})->with([
+    'too many per page' => 'per_page=51',
+    'zero per page' => 'per_page=0',
+    'page zero' => 'page=0',
+    'not a number' => 'page=abc',
+]);
+
+test('the detail of a part includes its colours and stock quantity', function () {
+    $part = Part::factory()
+        ->for(Brand::factory()->create(['name' => 'Volvo']))
+        ->withColours(['white', 'blue'])
+        ->create(['name' => 'Volvo FH 4 Sideskirt set', 'stock_quantity' => 7, 'price_cents' => 64000]);
+
+    $this->getJson("/api/parts/{$part->id}")
+        ->assertOk()
+        ->assertJsonPath('data.id', $part->id)
+        ->assertJsonPath('data.name', 'Volvo FH 4 Sideskirt set')
+        ->assertJsonPath('data.brand', 'Volvo')
+        ->assertJsonPath('data.stockQuantity', 7)
+        ->assertJsonPath('data.inStock', true)
+        ->assertJsonPath('data.priceCents', 64000)
+        ->assertJsonCount(2, 'data.colours');
+});
+
+test('an unknown part is a 404', function () {
+    $this->getJson('/api/parts/999')->assertNotFound();
+});
+
+test('the detail of a part requires a token', function () {
+    $part = Part::factory()->create();
+
+    $this->withoutToken()->getJson("/api/parts/{$part->id}")->assertUnauthorized();
+});

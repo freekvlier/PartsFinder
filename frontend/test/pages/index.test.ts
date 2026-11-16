@@ -62,7 +62,15 @@ describe('parts overview', () => {
   it('renders a card for every part with its details', async () => {
     response = listing([
       part(),
-      part({ id: 2, name: 'Volvo FH 4 Headlamp left', oem: '3141592', brand: 'Volvo', condition: 'new', priceCents: 32000, stockQuantity: 5 })
+      part({
+        id: 2,
+        name: 'Volvo FH 4 Headlamp left',
+        oem: '3141592',
+        brand: 'Volvo',
+        condition: 'new',
+        priceCents: 32000,
+        stockQuantity: 5
+      })
     ])
 
     const page = await mountSuspended(IndexPage)

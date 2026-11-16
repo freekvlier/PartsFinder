@@ -27,7 +27,7 @@ test('an unknown token is rejected with 401', function () {
     $this->withToken('wrong-token')->getJson('/api/me')->assertUnauthorized();
 });
 
-test('the workshop seeder creates a workshop without discount and one with 10% whose fixed tokens authenticate', function () {
+test('the workshop seeder creates a workshop without and one with 10% discount, with fixed tokens', function () {
     $this->seed(WorkshopSeeder::class);
 
     $this->withToken('local-token-standard')->getJson('/api/me')->assertOk()->assertJsonPath('discount_percentage', 0);

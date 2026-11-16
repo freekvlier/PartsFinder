@@ -11,12 +11,14 @@ defineProps<{ part: Part }>()
     data-testid="part-card"
   >
     <template #header>
-      <img
-        :src="part.image"
-        :alt="part.name"
-        class="aspect-4/3 w-full object-cover"
-        loading="lazy"
-      >
+      <NuxtLink :to="`/parts/${part.id}`">
+        <img
+          :src="part.image"
+          :alt="part.name"
+          class="aspect-4/3 w-full object-cover"
+          loading="lazy"
+        >
+      </NuxtLink>
     </template>
 
     <div class="flex flex-wrap items-center gap-2">
@@ -33,7 +35,12 @@ defineProps<{ part: Part }>()
     </div>
 
     <h2 class="font-semibold">
-      {{ part.name }}
+      <NuxtLink
+        :to="`/parts/${part.id}`"
+        class="hover:underline"
+      >
+        {{ part.name }}
+      </NuxtLink>
     </h2>
     <p class="text-sm text-muted">
       OEM {{ part.oem }}

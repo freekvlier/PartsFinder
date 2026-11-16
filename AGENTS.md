@@ -23,7 +23,9 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 - Colours are many-to-many through the `colour_part` pivot. A part without colours has no pivot rows. Stock is one number per part, shared by all its colours.
 - Money is stored and returned as integer cents (`price_cents`), never as decimals or floats. Only the frontend divides by 100, for display.
 - `Part::in_stock` is derived from `stock_quantity`, not stored.
-- Quote lines hold `part_id` and a nullable `colour_id` pointing at `colours`.
+- Quote lines hold `part_id` and a nullable `colour_id` pointing at `colours`, a `backorder` flag and a `unit_price_cents` snapshot that is only filled on submit.
+- Quote rules live in `app/Services/QuoteService.php` (lines, stock, submit) and `QuoteCalculator.php` (totals), never in controllers. Totals use integer cents and round half up at every step. Stock is shared across a part's colours, so the quantities of all lines of one part, in any colour, may not exceed the stock; a part without stock is a backorder. A part with colours needs one of its colours; a part without colours takes none.
+- Another workshop's quote is a 404 through `QuotePolicy` (`denyAsNotFound`), applied with `->can()` on the routes; a submitted quote answers 409 on every change (`QuoteLockedException`).
 - `PartSeeder` seeds the catalogue from `database/seeders/data/parts.json` (prices in euros, converted to cents) in every environment; `WorkshopSeeder` is local only.
 
 ## Testing
@@ -35,6 +37,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 
 ## Conventions
 
+- Lines of code are at most 120 characters, except generated files (`openapi.json`, `api.d.ts`) and framework stubs. ESLint enforces it in `frontend/`; in `backend/` keep to it by hand (Pint does not).
 - Keep it simple: use framework defaults. Don't add config, guards, factory states or helpers that the framework already covers.
 - Don't comment self-explanatory code, including in config, compose and env files. Comment only a non-obvious why.
 - Auth is Sanctum bearer tokens. `WorkshopSeeder` creates two workshops with fixed local tokens (`local-token-standard`, 0% discount; `local-token-discount`, 10%), and `DatabaseSeeder` only runs it in the `local` environment. `php artisan workshop:create {name} {discount=0}` creates a workshop and prints a generated token once.

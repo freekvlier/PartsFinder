@@ -31,7 +31,9 @@ class CreateWorkshop extends Command
             'discount_percentage' => $discount,
         ]);
 
-        $this->components->info("Workshop created. API token (shown once): {$workshop->createToken('api')->plainTextToken}");
+        $token = $workshop->createToken('api')->plainTextToken;
+
+        $this->components->info("Workshop created. API token (shown once): {$token}");
 
         return self::SUCCESS;
     }

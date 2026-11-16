@@ -24,4 +24,15 @@ class PartController extends Controller
 
         return PartResource::collection($parts);
     }
+
+    /**
+     * Show one part.
+     *
+     * @param  Part  $part  The part.
+     * @return PartResource The part with its brand, category and colours.
+     */
+    public function show(Part $part): PartResource
+    {
+        return new PartResource($part->load(['brand', 'category', 'colours']));
+    }
 }

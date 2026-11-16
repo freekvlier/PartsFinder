@@ -38,10 +38,119 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/parts/{part}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show one part */
+        get: operations["part.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start a new draft quote for the authenticated workshop */
+        post: operations["quote.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show one of the workshop's quotes */
+        get: operations["quote.show"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit a draft quote */
+        post: operations["quote.submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote}/lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a part to the quote */
+        post: operations["quoteLine.store"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote}/lines/{line}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove a line from the quote */
+        delete: operations["quoteLine.destroy"];
+        options?: never;
+        head?: never;
+        /** Change the quantity or colour of a line */
+        patch: operations["quoteLine.update"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AddQuoteLineRequest */
+        AddQuoteLineRequest: {
+            partId: number;
+            quantity: number;
+            colour?: string | null;
+        };
         /** PartResource */
         PartResource: {
             id: number;
@@ -56,6 +165,42 @@ export interface components {
             inStock: boolean;
             image: string;
             colours: string[];
+        };
+        /** QuoteResource */
+        QuoteResource: {
+            id: number;
+            /** @enum {string} */
+            status: "draft" | "submitted";
+            submittedAt: string | null;
+            discountPercentage: number;
+            lines: {
+                id: number;
+                partId: number;
+                name: string;
+                oem: string;
+                image: string;
+                colour: string | null;
+                quantity: number;
+                backorder: boolean;
+                unitPriceCents: number;
+                lineTotalCents: number;
+            }[];
+            warnings: {
+                code: string;
+                message: string;
+                lineIds: number[];
+            }[];
+            totals: {
+                subtotalCents: number;
+                discountCents: number;
+                vatCents: number;
+                totalCents: number;
+            };
+        };
+        /** UpdateQuoteLineRequest */
+        UpdateQuoteLineRequest: {
+            quantity?: number;
+            colour?: string | null;
         };
         /** Workshop */
         Workshop: {
@@ -94,6 +239,30 @@ export interface components {
                     errors: {
                         [key: string]: string[];
                     };
+                };
+            };
+        };
+        /** @description Not found */
+        ModelNotFoundException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Error overview. */
+                    message: string;
+                };
+            };
+        };
+        /** @description Authorization error */
+        AuthorizationException: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": {
+                    /** @description Error overview. */
+                    message: string;
                 };
             };
         };
@@ -175,6 +344,211 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "part.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The part. */
+                part: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `PartResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["PartResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "quote.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `QuoteResource` */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+        };
+    };
+    "quote.show": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The quote, resolved only among the workshop's own quotes. */
+                quote: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `QuoteResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            403: components["responses"]["AuthorizationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "quote.submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The draft quote. */
+                quote: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `QuoteResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            403: components["responses"]["AuthorizationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "quoteLine.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The draft quote. */
+                quote: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddQuoteLineRequest"];
+            };
+        };
+        responses: {
+            /** @description `QuoteResource` */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            403: components["responses"]["AuthorizationException"];
+            404: components["responses"]["ModelNotFoundException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "quoteLine.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The draft quote. */
+                quote: number;
+                /** @description The line, resolved only among this quote's lines. */
+                line: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `QuoteResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            403: components["responses"]["AuthorizationException"];
+            404: components["responses"]["ModelNotFoundException"];
+        };
+    };
+    "quoteLine.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The draft quote. */
+                quote: number;
+                /** @description The line, resolved only among this quote's lines. */
+                line: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["UpdateQuoteLineRequest"];
+            };
+        };
+        responses: {
+            /** @description `QuoteResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["QuoteResource"];
+                    };
+                };
+            };
+            401: components["responses"]["AuthenticationException"];
+            403: components["responses"]["AuthorizationException"];
+            404: components["responses"]["ModelNotFoundException"];
             422: components["responses"]["ValidationException"];
         };
     };

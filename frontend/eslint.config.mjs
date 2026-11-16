@@ -5,6 +5,7 @@ import { getDefaultAttributes } from 'eslint-plugin-better-tailwindcss/api/defau
 
 export default withNuxt(
   { ignores: ['app/types/api.d.ts'] },
+  { rules: { '@stylistic/max-len': ['error', { code: 120, ignoreUrls: true }] } },
   betterTailwindcss.configs['correctness-error'],
   {
     settings: {

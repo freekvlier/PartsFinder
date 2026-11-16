@@ -54,3 +54,17 @@
 - It is common practice, including in banking systems that run on stacks with a decimal type.
 
 **Trade-offs.** Values must be divided by 100 for display and multiplied when importing (the seed file lists euros and the seeder converts). A `decimal(10,2)` column would be exact in the database too, but Laravel returns it as a string in PHP, so calculations would still need conversion to an exact type.
+
+## 5. Quote rules live in a service class, not in controllers or the model
+
+**Chosen.** `QuoteService` holds every rule (colour, quantity and stock checks, merging lines, backorders, submit and the price snapshot) and `QuoteCalculator` holds the totals maths. Controllers only validate input and call the service; access to a quote is a policy that answers 404 for another workshop's quote.
+
+**Rejected.** Putting the rules in controllers, in model events, or in the frontend.
+
+**Why.**
+- The rules do not depend on HTTP, so they can be tested and reused (a console command or job could call them) without a request.
+- One place to read and change them, instead of the same check spread over a store and an update action.
+- Totals are calculated on the server only and returned with every response, so the frontend renders numbers and never adds them up.
+- The calculator uses integer cents and rounds half up at every step, so results are exact and repeatable.
+
+**Trade-offs.** Stock is shared across a part's colours, so the check totals the quantities of all lines of a part, in any colour. That is stricter than checking each line alone, but a quote can never promise more units than exist.

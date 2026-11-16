@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Workshop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -47,4 +48,17 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Authenticate the following requests of the test as a new workshop with the given discount.
+ */
+function actingAsWorkshop(float $discount = 0): Workshop
+{
+    $workshop = Workshop::factory()->create(['discount_percentage' => $discount]);
+
+    auth()->forgetGuards(); // one app instance serves every request of a test; production does not
+    test()->withToken($workshop->createToken('api')->plainTextToken);
+
+    return $workshop;
 }
