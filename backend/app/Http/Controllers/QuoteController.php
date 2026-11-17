@@ -32,22 +32,24 @@ class QuoteController extends Controller
     /**
      * Show one of the workshop's quotes.
      *
-     * @param  Quote  $quote  The quote, resolved only among the workshop's own quotes.
+     * @param  Request  $request  The authenticated request.
+     * @param  int  $quote  The id of the workshop's own quote.
      * @return QuoteResource The quote with lines, warnings and totals.
      */
-    public function show(Quote $quote): JsonResource
+    public function show(Request $request, int $quote): JsonResource
     {
-        return $quote->load(Quote::RESOURCE_RELATIONS)->toResource();
+        return $request->user()->quotes()->findOrFail($quote)->load(Quote::RESOURCE_RELATIONS)->toResource();
     }
 
     /**
      * Submit a draft quote.
      *
-     * @param  Quote  $quote  The draft quote.
+     * @param  Request  $request  The authenticated request.
+     * @param  int  $quote  The id of the workshop's own draft quote.
      * @return QuoteResource The submitted, now read-only quote.
      */
-    public function submit(Quote $quote): JsonResource
+    public function submit(Request $request, int $quote): JsonResource
     {
-        return $this->quoteService->submit($quote)->toResource();
+        return $this->quoteService->submit($request->user()->quotes()->draft()->findOrFail($quote))->toResource();
     }
 }

@@ -25,7 +25,7 @@ Working rules for LLM agents in this repository. Sub-project files (`backend/AGE
 - `Part::in_stock` is derived from `stock_quantity`, not stored.
 - Quote lines hold `part_id` and a nullable `colour_id` pointing at `colours`, a `backorder` flag and a `unit_price_cents` snapshot that is only filled on submit.
 - Quote rules live in `app/Services/QuoteService.php` (lines, stock, submit) and `QuoteCalculator.php` (pure, static totals maths), never in controllers. A quote stores its own `discount_percentage` and `vat_percentage`, copied from the workshop and `config('quotes.vat_percentage')` when it is created; later changes to either only affect new quotes. A line's unit price and total come from `QuoteLine::unitPriceCents()` and `totalCents()`. Totals use integer cents and round half up at every step. Stock is shared across a part's colours, so the quantities of all lines of one part, in any colour, may not exceed the stock; a part without stock is a backorder. A part with colours needs one of its colours; a part without colours takes none.
-- Another workshop's quote is a 404 through `QuotePolicy` (`denyAsNotFound`), applied with `->can()` on the routes; a submitted quote answers 409 on every change (the same policy, `update`).
+- Controllers resolve a quote only through `$request->user()->quotes()->findOrFail()` (and a line through `$quote->lines()`), so another workshop's quote is a 404; every change resolves it through `->draft()` too, so a submitted quote is a 404 as well.
 - `PartSeeder` seeds the catalogue from `database/seeders/data/parts.json` (prices in euros, converted to cents) in every environment; `WorkshopSeeder` is local only.
 
 ## Testing

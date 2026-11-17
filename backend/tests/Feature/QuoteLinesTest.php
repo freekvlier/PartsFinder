@@ -206,7 +206,7 @@ test('it removes a line', function () {
     expect(QuoteLine::find($remove->id))->toBeNull();
 });
 
-test('a submitted quote cannot be changed and answers 409', function () {
+test('a submitted quote cannot be changed and answers 404', function () {
     $part = Part::factory()->create(['stock_quantity' => 5]);
     $line = QuoteLine::factory()->for($this->quote)->for($part)->create(['quantity' => 1]);
     $this->quote->update([
@@ -217,9 +217,9 @@ test('a submitted quote cannot be changed and answers 409', function () {
         'total_cents' => 0,
     ]);
 
-    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1])->assertConflict();
-    $this->patchJson("{$this->url}/{$line->id}", ['quantity' => 2])->assertConflict();
-    $this->deleteJson("{$this->url}/{$line->id}")->assertConflict();
+    $this->postJson($this->url, ['part_id' => $part->id, 'quantity' => 1])->assertNotFound();
+    $this->patchJson("{$this->url}/{$line->id}", ['quantity' => 2])->assertNotFound();
+    $this->deleteJson("{$this->url}/{$line->id}")->assertNotFound();
 
     expect($line->fresh()->quantity)->toBe(1)
         ->and($this->quote->lines()->count())->toBe(1);

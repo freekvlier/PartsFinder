@@ -6,10 +6,9 @@ use App\Http\Requests\AddQuoteLineRequest;
 use App\Http\Requests\UpdateQuoteLineRequest;
 use App\Http\Resources\QuoteResource;
 use App\Models\Part;
-use App\Models\Quote;
-use App\Models\QuoteLine;
 use App\Services\QuoteService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuoteLineController extends Controller
@@ -25,11 +24,12 @@ class QuoteLineController extends Controller
      * Add a part to the quote.
      *
      * @param  AddQuoteLineRequest  $request  The validated line.
-     * @param  Quote  $quote  The draft quote.
+     * @param  int  $quote  The id of the workshop's own draft quote.
      * @return JsonResponse The updated quote, with status 201.
      */
-    public function store(AddQuoteLineRequest $request, Quote $quote): JsonResponse
+    public function store(AddQuoteLineRequest $request, int $quote): JsonResponse
     {
+        $quote = $request->user()->quotes()->draft()->findOrFail($quote);
         $part = Part::with('colours')->findOrFail($request->integer('part_id'));
 
         $quote = $this->quoteService->addLine($quote, $part, $request->integer('quantity'), $request->input('colour'));
@@ -41,12 +41,14 @@ class QuoteLineController extends Controller
      * Change the quantity or colour of a line.
      *
      * @param  UpdateQuoteLineRequest  $request  The validated change.
-     * @param  Quote  $quote  The draft quote.
-     * @param  QuoteLine  $line  The line, resolved only among this quote's lines.
+     * @param  int  $quote  The id of the workshop's own draft quote.
+     * @param  int  $line  The id of a line of that quote.
      * @return QuoteResource The updated quote.
      */
-    public function update(UpdateQuoteLineRequest $request, Quote $quote, QuoteLine $line): JsonResource
+    public function update(UpdateQuoteLineRequest $request, int $quote, int $line): JsonResource
     {
+        $quote = $request->user()->quotes()->draft()->findOrFail($quote);
+        $line = $quote->lines()->findOrFail($line);
         $line->load('part.colours', 'colour');
 
         return $this->quoteService->updateLine($quote, $line, $request->validated())->toResource();
@@ -55,12 +57,16 @@ class QuoteLineController extends Controller
     /**
      * Remove a line from the quote.
      *
-     * @param  Quote  $quote  The draft quote.
-     * @param  QuoteLine  $line  The line, resolved only among this quote's lines.
+     * @param  Request  $request  The authenticated request.
+     * @param  int  $quote  The id of the workshop's own draft quote.
+     * @param  int  $line  The id of a line of that quote.
      * @return QuoteResource The updated quote.
      */
-    public function destroy(Quote $quote, QuoteLine $line): JsonResource
+    public function destroy(Request $request, int $quote, int $line): JsonResource
     {
+        $quote = $request->user()->quotes()->draft()->findOrFail($quote);
+        $line = $quote->lines()->findOrFail($line);
+
         return $this->quoteService->removeLine($quote, $line)->toResource();
     }
 }

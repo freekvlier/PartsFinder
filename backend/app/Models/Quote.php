@@ -6,6 +6,8 @@ use App\Enums\QuoteStatus;
 use App\Services\QuoteCalculator;
 use Database\Factories\QuoteFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,14 +72,14 @@ class Quote extends Model
     }
 
     /**
-     * Whether the quote belongs to the workshop.
+     * Quotes that can still be changed: the drafts.
      *
-     * @param  Workshop  $workshop  The workshop to check.
-     * @return bool True for the owner.
+     * @param  Builder<Quote>  $query  The quotes query.
      */
-    public function isOwnedBy(Workshop $workshop): bool
+    #[Scope]
+    protected function draft(Builder $query): void
     {
-        return $this->workshop_id === $workshop->id;
+        $query->where('status', QuoteStatus::Draft);
     }
 
     /**

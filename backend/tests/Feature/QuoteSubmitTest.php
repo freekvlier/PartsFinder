@@ -113,18 +113,18 @@ test('a submitted quote cannot be submitted again', function () {
     QuoteLine::factory()->for($this->quote)->for(Part::factory()->create(['stock_quantity' => 5]))->create();
     $this->postJson($this->url)->assertOk();
 
-    $this->postJson($this->url)->assertConflict();
+    $this->postJson($this->url)->assertNotFound();
 });
 
-test('after submission every mutation answers 409 and nothing changes', function () {
+test('after submission every mutation answers 404 and nothing changes', function () {
     $part = Part::factory()->create(['price_cents' => 1000, 'stock_quantity' => 10]);
     $line = QuoteLine::factory()->for($this->quote)->for($part)->create(['quantity' => 2]);
     $this->postJson($this->url)->assertOk();
 
     $lines = "/api/quotes/{$this->quote->id}/lines";
-    $this->postJson($lines, ['part_id' => $part->id, 'quantity' => 1])->assertConflict();
-    $this->patchJson("{$lines}/{$line->id}", ['quantity' => 5])->assertConflict();
-    $this->deleteJson("{$lines}/{$line->id}")->assertConflict();
+    $this->postJson($lines, ['part_id' => $part->id, 'quantity' => 1])->assertNotFound();
+    $this->patchJson("{$lines}/{$line->id}", ['quantity' => 5])->assertNotFound();
+    $this->deleteJson("{$lines}/{$line->id}")->assertNotFound();
 
     $this->getJson("/api/quotes/{$this->quote->id}")
         ->assertOk()
