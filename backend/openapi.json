@@ -428,7 +428,7 @@
                         "name": "quote",
                         "in": "path",
                         "required": true,
-                        "description": "The quote, resolved only among the workshop's own quotes.",
+                        "description": "The id of the workshop's own quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -453,12 +453,6 @@
                             }
                         }
                     },
-                    "404": {
-                        "$ref": "#/components/responses/ModelNotFoundException"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
-                    },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
                     }
@@ -477,7 +471,7 @@
                         "name": "quote",
                         "in": "path",
                         "required": true,
-                        "description": "The draft quote.",
+                        "description": "The id of the workshop's own draft quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -505,12 +499,6 @@
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
                     },
-                    "404": {
-                        "$ref": "#/components/responses/ModelNotFoundException"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
-                    },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
                     }
@@ -529,7 +517,7 @@
                         "name": "quote",
                         "in": "path",
                         "required": true,
-                        "description": "The draft quote.",
+                        "description": "The id of the workshop's own draft quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -570,9 +558,6 @@
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
                     },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
-                    },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
                     }
@@ -591,7 +576,7 @@
                         "name": "quote",
                         "in": "path",
                         "required": true,
-                        "description": "The draft quote.",
+                        "description": "The id of the workshop's own draft quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -600,7 +585,7 @@
                         "name": "line",
                         "in": "path",
                         "required": true,
-                        "description": "The line, resolved only among this quote's lines.",
+                        "description": "The id of a line of that quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -637,12 +622,6 @@
                     "422": {
                         "$ref": "#/components/responses/ValidationException"
                     },
-                    "404": {
-                        "$ref": "#/components/responses/ModelNotFoundException"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
-                    },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
                     }
@@ -659,7 +638,7 @@
                         "name": "quote",
                         "in": "path",
                         "required": true,
-                        "description": "The draft quote.",
+                        "description": "The id of the workshop's own draft quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -668,7 +647,7 @@
                         "name": "line",
                         "in": "path",
                         "required": true,
-                        "description": "The line, resolved only among this quote's lines.",
+                        "description": "The id of a line of that quote.",
                         "schema": {
                             "type": "integer"
                         }
@@ -692,12 +671,6 @@
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/ModelNotFoundException"
-                    },
-                    "403": {
-                        "$ref": "#/components/responses/AuthorizationException"
                     },
                     "401": {
                         "$ref": "#/components/responses/AuthenticationException"
@@ -1054,25 +1027,6 @@
             },
             "ModelNotFoundException": {
                 "description": "Not found",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "message": {
-                                    "type": "string",
-                                    "description": "Error overview."
-                                }
-                            },
-                            "required": [
-                                "message"
-                            ]
-                        }
-                    }
-                }
-            },
-            "AuthorizationException": {
-                "description": "Authorization error",
                 "content": {
                     "application/json": {
                         "schema": {

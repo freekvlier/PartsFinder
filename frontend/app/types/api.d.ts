@@ -280,18 +280,6 @@ export interface components {
                 };
             };
         };
-        /** @description Authorization error */
-        AuthorizationException: {
-            headers: {
-                [name: string]: unknown;
-            };
-            content: {
-                "application/json": {
-                    /** @description Error overview. */
-                    message: string;
-                };
-            };
-        };
     };
     parameters: never;
     requestBodies: never;
@@ -461,7 +449,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The quote, resolved only among the workshop's own quotes. */
+                /** @description The id of the workshop's own quote. */
                 quote: number;
             };
             cookie?: never;
@@ -480,8 +468,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            403: components["responses"]["AuthorizationException"];
-            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "quote.submit": {
@@ -489,7 +475,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The draft quote. */
+                /** @description The id of the workshop's own draft quote. */
                 quote: number;
             };
             cookie?: never;
@@ -508,8 +494,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            403: components["responses"]["AuthorizationException"];
-            404: components["responses"]["ModelNotFoundException"];
             422: components["responses"]["ValidationException"];
         };
     };
@@ -518,7 +502,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The draft quote. */
+                /** @description The id of the workshop's own draft quote. */
                 quote: number;
             };
             cookie?: never;
@@ -541,7 +525,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            403: components["responses"]["AuthorizationException"];
             404: components["responses"]["ModelNotFoundException"];
             422: components["responses"]["ValidationException"];
         };
@@ -551,9 +534,9 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The draft quote. */
+                /** @description The id of the workshop's own draft quote. */
                 quote: number;
-                /** @description The line, resolved only among this quote's lines. */
+                /** @description The id of a line of that quote. */
                 line: number;
             };
             cookie?: never;
@@ -572,8 +555,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            403: components["responses"]["AuthorizationException"];
-            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "quoteLine.update": {
@@ -581,9 +562,9 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The draft quote. */
+                /** @description The id of the workshop's own draft quote. */
                 quote: number;
-                /** @description The line, resolved only among this quote's lines. */
+                /** @description The id of a line of that quote. */
                 line: number;
             };
             cookie?: never;
@@ -606,8 +587,6 @@ export interface operations {
                 };
             };
             401: components["responses"]["AuthenticationException"];
-            403: components["responses"]["AuthorizationException"];
-            404: components["responses"]["ModelNotFoundException"];
             422: components["responses"]["ValidationException"];
         };
     };
